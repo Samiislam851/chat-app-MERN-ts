@@ -34,11 +34,36 @@ export default function page({ }: Props) {
 
 
 
- 
+
   const { loading, setLoading, user, setUser, logOut, emailSignIn } = contextValue!
 
 
   const { register, handleSubmit } = useForm<inputObject>()
+
+
+
+  const loginFromDB = async (user: User) => {
+    // save user to DB
+
+    try {
+      const res = await axios.post('http://localhost:3000/login', user)
+
+      if (res.status == 200) {
+        localStorage.setItem('chat-app', res.data.token)
+
+      } else {
+        await logOut()
+      }
+
+    } catch (error) {
+
+    } finally {
+      setLoading(false)
+    }
+  }
+
+
+
 
 
 
@@ -47,10 +72,13 @@ export default function page({ }: Props) {
     if (/^\s*$/.test(data.email) || /^\s*$/.test(data.password)) {
       toast.error('Please Enter something ')
     } else {
+
+
       setLoading(true)
       emailSignIn(data.email, data.password).then((userCredential) => {
 
         const user = userCredential.user;
+        loginFromDB(user)
         setUser(user)
         setLoading(false)
       })
