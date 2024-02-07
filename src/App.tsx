@@ -8,6 +8,8 @@ import Dashboard from './pages/Dashboard/Dashboard'
 import DefaultHome from './components/DefaultHome/DefaultHome'
 import Chat from './components/Chat/Chat'
 import PrivateRoute from './Configs/PrivateRoute'
+import AddFriend from './components/AddFriend/AddFriend'
+import NotFoundPage from './pages/NotFoundPage/NotFoundPage'
 type Props = {}
 
 const App = (props: Props) => {
@@ -16,13 +18,13 @@ const App = (props: Props) => {
     {
       path: '/',
       element: <Navigate to='/dashboard' />,
-      errorElement: <>404 page</>,
+      errorElement: <NotFoundPage/>,
 
     },
     {
       path: '/dashboard/',
       element: <PrivateRoute> <Dashboard /></PrivateRoute> ,
-      errorElement: <>404 page</>,
+      errorElement: <NotFoundPage/>,
       children: [
         {
           path:'/dashboard/',
@@ -31,6 +33,10 @@ const App = (props: Props) => {
         {
           path:'/dashboard/chat',
           element: <Chat/>
+        },
+        {
+          path:'/dashboard/add-friend',
+          element: <AddFriend/>
         },
       ]
     },

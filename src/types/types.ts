@@ -5,7 +5,7 @@ export interface User {
     photoURL: string | null;
 }
 export interface MongoUser{
-    id?: string;
+    _id?: string;
     name: string;
     email:string,
     photoURL : string;

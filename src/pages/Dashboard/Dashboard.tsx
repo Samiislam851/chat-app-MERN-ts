@@ -6,13 +6,13 @@ type Props = {}
 
 const Dashboard = (props: Props) => {
     return (
-        <div className='flex'>
+        <div className='flex w-screen'>
 
-            <div className="basis-1/2">
+            <div className="">
                <SideBar/>
             </div>
 
-            <div className="basis-1/2">
+            <div className="flex-grow">
 
                 <Outlet />
 
