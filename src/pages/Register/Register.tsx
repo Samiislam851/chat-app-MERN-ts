@@ -5,12 +5,13 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 import toast from 'react-hot-toast';
 
-import { Context, valueType } from '@/components/contextApis/ContextProvider';
-import { useRouter } from 'next/navigation';
+
 import { GoogleAuthProvider } from 'firebase/auth';
 import axios from 'axios';
 
 import { useForm } from 'react-hook-form';
+import { Context, valueType } from '../../Configs/ContextProvider';
+import { Link, useNavigate } from 'react-router-dom';
 
 
 
@@ -27,44 +28,46 @@ type inputObject = {
 
 
 
-export default function page({ }: Props) {
+function page({ }: Props) {
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const contextValue = useContext<valueType | null>(Context)
 
-    const router = useRouter();
+    const navigate = useNavigate()
 
 
     const { loading, setLoading, user, logOut, emailRegister } = contextValue!
 
 
-    const saveUserToDB = async (user: MongoUser, retries = 3) => {
-        console.log('from save user to db', user);
-    
-        try {
-            const res = await axios.post('http://localhost:3000/api/saveUserToDB', user);
-    
-            if (res.status === 200) {
-                localStorage.setItem('chat-app', res.data.token);
-                router.push('/dashboard');
-            } else {
-                await logOut();
-            }
-        } catch (error) {
-            console.log(error);
-            if (retries > 0) {
-                console.log(`Retrying... (${retries} attempts left)`);
-               
-                    await saveUserToDB(user, retries - 1);
-               
-            } else {
-                toast.error('Failed to save user to the database after multiple attempts.');
-                await logOut();
-            }
-        } finally {
-            setLoading(false);
-        }
-    };
-    
+
+
+    // const saveUserToDB = async (user: MongoUser, retries = 3) => {
+    //     console.log('from save user to db', user);
+
+    //     try {
+    //         const res = await axios.post('http://localhost:3000/api/saveUserToDB', user);
+
+    //         if (res.status === 200) {
+    //             localStorage.setItem('chat-app', res.data.token);
+    //            navigate('/dashboard');
+    //         } else {
+    //             await logOut();
+    //         }
+    //     } catch (error) {
+    //         console.log(error);
+    //         if (retries > 0) {
+    //             console.log(`Retrying... (${retries} attempts left)`);
+
+    //                 await saveUserToDB(user, retries - 1);
+
+    //         } else {
+    //             toast.error('Failed to save user to the database after multiple attempts.');
+    //             await logOut();
+    //         }
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
+
 
 
 
@@ -74,7 +77,6 @@ export default function page({ }: Props) {
     const handleRegister = (data: inputObject) => {
 
         const user = { ...data }
-        console.log(user);
 
         if (/^\s*$/.test(data.email) || /^\s*$/.test(data.password) || /^\s*$/.test(data.image) || /^\s*$/.test(data.name)) {
             toast.error(' Please give all the informations ')
@@ -82,7 +84,8 @@ export default function page({ }: Props) {
             setLoading(true)
             emailRegister(user.email, user.password)
                 .then((userCredential) => {
-                    saveUserToDB(user)
+                    // saveUserToDB(user)
+                    console.log(userCredential);
                 })
                 .catch((error) => {
                     const errorCode = error.code;
@@ -94,10 +97,7 @@ export default function page({ }: Props) {
 
     }
 
-    if (user) {
-        router.push('/dashboard')
-    }
-    else return (
+    return (
         <>
 
             <div className='background min-h-[100vh] text-center flex flex-col-reverse md:flex-row gap-10 justify-center items-center '>
@@ -106,7 +106,7 @@ export default function page({ }: Props) {
                 <div className='w-fit '>
                     <div className='rounded-lg py-10 backdrop-blur-md bg-gray-300 bg-opacity-[0.09] border border-opacity-10 border-gray-400 max-w-md  transition-all ease-in-out duration-500   '>
                         <div className='w-fit mx-auto'>
-                            <Image className='' src={'/logo.png'} width={50} height={50} alt={'Logo'} />
+                            <img className='' src={'/src/assets/images/logo.png'} width={50} height={50} alt={'Logo'} />
                         </div>
 
                         <h3 className='text-3xl text-white font-medium md:font-bold px-5 md:px-10 my-6'>Create an account</h3>
@@ -128,7 +128,7 @@ export default function page({ }: Props) {
                             </button>
                         </form>
                         <div className='max-w-md  px-5 md:px-10'>
-                            <h3 className='text-gray-200 text-center md:text-left text-sm py-3'>    Already have an account? <span className='text-blue-300'> <Link href={'/login'}>Login and continue</Link> </span></h3>
+                            <h3 className='text-gray-200 text-center md:text-left text-sm py-3'>    Already have an account? <span className='text-blue-300'> <Link to={'/login'}>Login and continue</Link> </span></h3>
 
 
 
@@ -146,3 +146,4 @@ export default function page({ }: Props) {
 }
 
 
+export default page
