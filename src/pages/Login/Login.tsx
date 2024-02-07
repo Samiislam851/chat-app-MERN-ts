@@ -28,77 +28,33 @@ type inputObject = {
 
 
 export default function page({ }: Props) {
+
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const contextValue = useContext<valueType | null>(Context)
 
-  const navigate = useNavigate();
-
-  const googleLogin = contextValue?.googleLogin
-  const { loading, setLoading, user, logOut, emailSignIn } = contextValue!
 
 
-  // const saveUserToDB = async (user: User) => {
-  //   // save user to DB
-  //   const res = await axios.post('http://localhost:3000/api/saveUser', user)
-
-  //   console.log(res.data);
-
-
-
-  //   setLoading(false)
-  // }
-
-
-  // const loginWithGoogle = async () => {
-  //   if (googleLogin) {
-  //     setLoading(true);
-  //     try {
-  //       googleLogin().then((result : any) => {
-  //         // saveUserToDB(result.user)
-
-  //       }).catch((error : any) => {
-  //         console.log(error);
-
-  //         const errorCode = error.code;
-  //         const errorMessage = error.message;
-
-  //         const email = error.customData.email;
-
-  //         const credential = GoogleAuthProvider.credentialFromError(error);
-
-  //       });
-
-  //     } catch (error) {
-  //       console.log(error);
-
-  //     } finally {
-  //       setIsLoading(false);
-  //     }
-
-
-
-
-  //   }
-  // };
-
-
-
+ 
+  const { loading, setLoading, user, setUser, logOut, emailSignIn } = contextValue!
 
 
   const { register, handleSubmit } = useForm<inputObject>()
+
+
+
   const handleLogin = (data: inputObject) => {
     console.log(data);
     if (/^\s*$/.test(data.email) || /^\s*$/.test(data.password)) {
-      toast.error(' Please Enter something ')
+      toast.error('Please Enter something ')
     } else {
       setLoading(true)
-      emailSignIn(data.email, data.password).then((userCredential ) => {
+      emailSignIn(data.email, data.password).then((userCredential) => {
 
         const user = userCredential.user;
-        // saveUserToDB(user)
-
+        setUser(user)
+        setLoading(false)
       })
-        .catch((error:any) => {
+        .catch((error: any) => {
           const errorCode = error.code;
           const errorMessage = error.message;
           toast.error(errorMessage);

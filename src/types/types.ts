@@ -4,3 +4,9 @@ export interface User {
     email: string | null; 
     photoURL: string | null;
 }
+export interface MongoUser{
+    id?: string;
+    name: string;
+    email:string,
+    photoURL : string;
+}

@@ -1,4 +1,4 @@
-'use client'
+
 import React, { useContext, useState } from 'react'
 import { FcGoogle } from "react-icons/fc";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
@@ -12,6 +12,7 @@ import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import { Context, valueType } from '../../Configs/ContextProvider';
 import { Link, useNavigate } from 'react-router-dom';
+import { MongoUser } from '../../types/types';
 
 
 
@@ -35,38 +36,42 @@ function page({ }: Props) {
     const navigate = useNavigate()
 
 
-    const { loading, setLoading, user, logOut, emailRegister } = contextValue!
+    const { loading, setLoading, user, addUserDetails, logOut, emailRegister, setUser } = contextValue!
 
 
 
 
-    // const saveUserToDB = async (user: MongoUser, retries = 3) => {
-    //     console.log('from save user to db', user);
 
-    //     try {
-    //         const res = await axios.post('http://localhost:3000/api/saveUserToDB', user);
+    //////////////////////////// Save the user to database 
 
-    //         if (res.status === 200) {
-    //             localStorage.setItem('chat-app', res.data.token);
-    //            navigate('/dashboard');
-    //         } else {
-    //             await logOut();
-    //         }
-    //     } catch (error) {
-    //         console.log(error);
-    //         if (retries > 0) {
-    //             console.log(`Retrying... (${retries} attempts left)`);
+    const saveUserToDB = async (user: MongoUser, retries = 3) => {
+        console.log('from save user to db', user);
 
-    //                 await saveUserToDB(user, retries - 1);
+        try {
+            const res = await axios.post('http://localhost:3000/saveUser', user);
 
-    //         } else {
-    //             toast.error('Failed to save user to the database after multiple attempts.');
-    //             await logOut();
-    //         }
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
+            if (res.status === 200) {
+
+                localStorage.setItem('chat-app', res.data.token);
+                navigate('/dashboard');
+            } else {
+                await logOut();
+            }
+        } catch (error) {
+            console.log(error);
+            if (retries > 0) {
+                console.log(`Retrying... (${retries} attempts left)`);
+
+                await saveUserToDB(user, retries - 1);
+
+            } else {
+                toast.error('Failed to save user to the database after multiple attempts.');
+                await logOut();
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
 
 
 
@@ -76,15 +81,31 @@ function page({ }: Props) {
     const { register, handleSubmit } = useForm<inputObject>()
     const handleRegister = (data: inputObject) => {
 
-        const user = { ...data }
+        const userData = { ...data }
 
         if (/^\s*$/.test(data.email) || /^\s*$/.test(data.password) || /^\s*$/.test(data.image) || /^\s*$/.test(data.name)) {
-            toast.error(' Please give all the informations ')
+            toast.error(' Please give all the information ')
         } else {
             setLoading(true)
-            emailRegister(user.email, user.password)
+            emailRegister(userData.email, userData.password)
                 .then((userCredential) => {
-                    // saveUserToDB(user)
+                    setLoading(true)
+                    addUserDetails(userData.name, userData.image).then(res => {
+                  
+                        setLoading(false)
+                        console.log('profile updated')
+
+                    }).catch((err) => {
+                        toast.error(err.message)
+                        setLoading(false)
+                    })
+
+
+                    saveUserToDB({
+                        name: userData.name,
+                        email: userData.email,
+                        photoURL: userData.image,
+                    })
                     console.log(userCredential);
                 })
                 .catch((error) => {
@@ -101,8 +122,6 @@ function page({ }: Props) {
         <>
 
             <div className='background min-h-[100vh] text-center flex flex-col-reverse md:flex-row gap-10 justify-center items-center '>
-
-
                 <div className='w-fit '>
                     <div className='rounded-lg py-10 backdrop-blur-md bg-gray-300 bg-opacity-[0.09] border border-opacity-10 border-gray-400 max-w-md  transition-all ease-in-out duration-500   '>
                         <div className='w-fit mx-auto'>
