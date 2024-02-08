@@ -4,7 +4,8 @@ import React, { useContext, useEffect, useState } from 'react'
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { Context } from '../../Configs/ContextProvider';
 import { MongoUser } from '../../types/types';
-import RequesterCard from '../RequesterCard/RequesterCard';
+import RequestedPersonCard from '../RequestedPersonCard/RequestedPersonCard';
+
 
 
 type Props = {}
@@ -22,7 +23,7 @@ const SentRequests = (props: Props) => {
     const { user, logOut } = useContext(Context)!
     const [loading, setLoading] = useState<boolean>(false)
 
-    const [requesters, setRequesters] = useState<MongoUser[]>([])
+    const [requestedPersons, setRequestedPersons] = useState<MongoUser[]>([])
 
 
 
@@ -31,7 +32,7 @@ const SentRequests = (props: Props) => {
     const [dbUser, setDbUser] = useState<MongoUser | null>(null)
     useEffect(() => {
         setLoading(true)
-        axios.get(`http://localhost:3000/get-friend-requests?email=${user?.email}`, {
+        axios.get(`http://localhost:3000/get-sent-requests?email=${user?.email}`, {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem('chat-app')}`
             }
@@ -39,7 +40,7 @@ const SentRequests = (props: Props) => {
             .then(res => {
 
 
-                setRequesters(res.data.users)
+                setRequestedPersons(res.data.users)
                 setLoading(false)
 
             })
@@ -51,10 +52,6 @@ const SentRequests = (props: Props) => {
             )
 
     }, [])
-
-
-
-
 
 
     return (
@@ -74,11 +71,11 @@ const SentRequests = (props: Props) => {
 
                 <div className='max-w-md  mx-auto'>
 
-                    <h3 className='text-sm text-[#81689D] pb-1'>Incoming Requests: </h3>
+                    <h3 className='text-sm text-[#81689D] pb-1'>Sent Requests: </h3>
                     <div className='border-t pt-0'>
 
-                        {!requesters[0] && <div className='text-xl text-center py-10 text-gray-500'>
-                            No incoming requests
+                        {!requestedPersons[0] && <div className='text-xl text-center py-10 text-gray-500'>
+                            No Sent requests
                         </div>}
                         <ul className='list-none '>
                             {
@@ -86,27 +83,16 @@ const SentRequests = (props: Props) => {
 
                                 /////////////////// create an array of requested users then show them here
 
-                                requesters?.map((requester: MongoUser, i: number) => <RequesterCard key={i} dbUser={dbUser} setDbUser={setDbUser} requesters={requesters} setRequesters={setRequesters} requester={requester} />)
+                                requestedPersons?.map((requestedPerson: MongoUser, i: number) => <RequestedPersonCard key={i} dbUser={dbUser} setDbUser={setDbUser} requestedPersons={requestedPersons} setRequestedPersons={setRequestedPersons} requestedPerson={requestedPerson} />)
                             }
 
                         </ul>
                     </div>
                 </div>
 
-
-
-
-
             }
 
-
-
-
         </div >
-
-
-
-
     )
 }
 

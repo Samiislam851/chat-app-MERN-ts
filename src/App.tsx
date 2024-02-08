@@ -12,6 +12,7 @@ import AddFriend from './components/AddFriend/AddFriend'
 import NotFoundPage from './pages/NotFoundPage/NotFoundPage'
 import FriendRequests from './components/FriendRequests/FriendRequests'
 import Friends from './components/Firends/Firends'
+import SentRequests from './components/SentRequests/SentRequests'
 type Props = {}
 
 const App = (props: Props) => {
@@ -47,6 +48,10 @@ const App = (props: Props) => {
         {
           path:'/dashboard/friends',
           element: <Friends/>
+        },
+        {
+          path:'/dashboard/sent-requests',
+          element: <SentRequests/>
         },
       ]
     },
