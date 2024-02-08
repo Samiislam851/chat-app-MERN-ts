@@ -1,6 +1,6 @@
 
 import axios from 'axios';
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast';
 import { CiSearch } from "react-icons/ci";
@@ -23,8 +23,7 @@ const AddFriend = (props: Props) => {
     const { register, handleSubmit } = useForm<inputObject>()
 
 
-    const contextValue = useContext(Context)
-    const { user, logOut } = contextValue!
+    const { user, logOut } = useContext(Context)!
     const [loading, setLoading] = useState<boolean>(false)
     const [searchedUsers, setSearchedUsers] = useState<MongoUser[]>([])
     const [searched, setSearched] = useState<boolean>(false)
@@ -74,6 +73,20 @@ const AddFriend = (props: Props) => {
 
 
     // console.log(searchedUsers);
+    const [dbUser, setDbUser] = useState<MongoUser | null>(null)
+    useEffect(() => {
+
+        axios.get(`http://localhost:3000/get-single-user?email=${user?.email}`, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('chat-app')}`
+            }
+        })
+            .then(res => setDbUser(res.data.user))
+            .catch(err => console.log(err)
+            )
+
+    }, [])
+
 
 
 
@@ -116,7 +129,7 @@ const AddFriend = (props: Props) => {
 
                             <ul className='list-none '>
                                 {
-                                    searchedUsers.map((searchedUser: MongoUser, i) => <SearchedPeopleCard key={i} searchUser={searchedUser} />)
+                                    searchedUsers.map((searchedUser: MongoUser, i) => <SearchedPeopleCard key={i} dbUser={dbUser}  setDbUser={setDbUser}  searchUser={searchedUser} />)
                                 }
 
                             </ul>

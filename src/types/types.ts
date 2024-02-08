@@ -9,4 +9,8 @@ export interface MongoUser{
     name: string;
     email:string,
     photoURL : string;
+    friends?: string[],
+    incomingRequests?: string[],
+    pendingRequests?:string[],
+    chats?: string[]
 }

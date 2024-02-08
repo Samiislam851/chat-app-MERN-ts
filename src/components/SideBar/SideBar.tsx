@@ -83,7 +83,7 @@ const SideBar = (props: Props) => {
                         <h3 className='text-xl font-medium'>{user?.displayName!}</h3>
                         <h4 className='text-sm text-gray-500'>{user?.email}</h4>
                     </div>
-                    <button className="text-white basis-[20%]" onClick={logOutFunc}>
+                    <button className="text-white basis-[20%]" title='Log Out' onClick={logOutFunc}>
                         <IoIosLogOut className="w-8 h-8 text-red-600" />
                     </button>
                 </div>

@@ -35,7 +35,10 @@ export default function page({ }: Props) {
 
 
 
-  const { loading, setLoading, user, setUser, logOut, emailSignIn } = contextValue!
+  const { loading, setLoading, user, setUser, logOut, emailSignIn, setDbUser, dbUser } = contextValue!
+
+
+  console.log('DBUSER :::::::::::::::::::', dbUser);
 
 
   const { register, handleSubmit } = useForm<inputObject>()
@@ -49,6 +52,13 @@ export default function page({ }: Props) {
       const res = await axios.post('http://localhost:3000/login', user)
 
       if (res.status == 200) {
+
+
+        setDbUser(res.data.user)
+        console.log('response............', res.data.user);
+
+
+
         localStorage.setItem('chat-app', res.data.token)
 
       } else {

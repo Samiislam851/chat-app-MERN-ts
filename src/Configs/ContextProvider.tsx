@@ -2,7 +2,7 @@ import React, { ReactNode, createContext, useEffect, useState } from 'react'
 import { Toaster } from 'react-hot-toast'
 import { GoogleAuthProvider, createUserWithEmailAndPassword, getAuth, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut, updateProfile } from "firebase/auth";
 import { UserCredential } from "firebase/auth";
-import { User } from '../types/types';
+import { MongoUser, User } from '../types/types';
 import app from '../utils/firebase';
 
 
@@ -22,7 +22,9 @@ export interface valueType {
     emailSignIn: (email: string, password: string) => Promise<UserCredential>,
     emailRegister: (email: string, password: string) => Promise<UserCredential>,
     addUserDetails: (name: string, photoURL: string) => Promise<void>,
-    setUser: React.Dispatch<React.SetStateAction<User | null>>
+    setUser: React.Dispatch<React.SetStateAction<User | null>>,
+    dbUser: MongoUser | null,
+    setDbUser: React.Dispatch<React.SetStateAction<MongoUser | null>>
 }
 
 
@@ -41,6 +43,7 @@ export default function ContextProvider({ children }: Props) {
     const [first, setFirst] = useState<boolean>(true)
     const [loading, setLoading] = useState<boolean>(true)
     const [user, setUser] = useState<User | null>(null)
+    const [dbUser, setDbUser] = useState<MongoUser | null>(null)
 
 
     ////////////////////  firebase features initialization ///////////////
@@ -90,6 +93,7 @@ export default function ContextProvider({ children }: Props) {
         return signInWithEmailAndPassword(auth, email, password)
 
     }
+
     ////////////////////// Sign Out ////////////////////////////
     const logOut = () => {
         setLoading(true)
@@ -112,8 +116,8 @@ export default function ContextProvider({ children }: Props) {
 
 
     const value: valueType = {
-        first, setFirst, googleLogin, user, logOut,
-        loading, setLoading, emailRegister, emailSignIn, addUserDetails, setUser
+        first, setFirst, googleLogin,  logOut,
+        loading, setLoading, emailRegister, emailSignIn, addUserDetails,user, setUser, dbUser, setDbUser
     }
 
     return (

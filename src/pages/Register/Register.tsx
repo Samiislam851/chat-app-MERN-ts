@@ -36,11 +36,12 @@ function page({ }: Props) {
     const navigate = useNavigate()
 
 
-    const { loading, setLoading, user, addUserDetails, logOut, emailRegister, setUser } = contextValue!
+    const { loading, setLoading, user, addUserDetails, logOut, emailRegister, setUser,setDbUser, dbUser } = contextValue!
 
 
 
 
+console.log('dbUser ::::::::::::', dbUser);
 
     //////////////////////////// Save the user to database 
 
@@ -51,7 +52,7 @@ function page({ }: Props) {
             const res = await axios.post('http://localhost:3000/saveUser', user);
 
             if (res.status === 200) {
-
+                setDbUser(res.data.user)
                 localStorage.setItem('chat-app', res.data.token);
                 navigate('/dashboard');
             } else {
