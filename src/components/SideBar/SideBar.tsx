@@ -4,6 +4,7 @@ import { IoIosLogOut } from 'react-icons/io'
 import { Link } from 'react-router-dom'
 import { IoPersonAddOutline, IoPersonOutline } from 'react-icons/io5'
 import { BsPeopleFill } from 'react-icons/bs'
+import { FaArrowRight } from 'react-icons/fa'
 
 type Props = {}
 
@@ -57,6 +58,13 @@ const SideBar = (props: Props) => {
                         <BsPeopleFill />
                         </div>
                         <span>My Friends</span>
+                    </Link>
+                    <Link to='/dashboard/sent-requests' className='flex justify-start gap-2 text-base items-center text-gray-600 font-base  pt-2'>
+
+                        <div className='border-2 rounded-md p-1'>
+                        <FaArrowRight />
+                        </div>
+                        <span>Sent Requests</span>
                     </Link>
 
                 </div>

@@ -10,6 +10,8 @@ import Chat from './components/Chat/Chat'
 import PrivateRoute from './Configs/PrivateRoute'
 import AddFriend from './components/AddFriend/AddFriend'
 import NotFoundPage from './pages/NotFoundPage/NotFoundPage'
+import FriendRequests from './components/FriendRequests/FriendRequests'
+import Friends from './components/Firends/Firends'
 type Props = {}
 
 const App = (props: Props) => {
@@ -37,6 +39,14 @@ const App = (props: Props) => {
         {
           path:'/dashboard/add-friend',
           element: <AddFriend/>
+        },
+        {
+          path:'/dashboard/friend-requests',
+          element: <FriendRequests/>
+        },
+        {
+          path:'/dashboard/friends',
+          element: <Friends/>
         },
       ]
     },
