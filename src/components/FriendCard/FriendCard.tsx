@@ -26,9 +26,9 @@ const FriendCard = ({ friend, dbUser, setDbUser, setFriends, friends }: Props) =
     const [loadingCancel, setLoadingCancel] = useState(false)
 
 
-const chat=()=>{
-    
-}
+    const chat = () => {
+        axios.get(`http://localhost:3000/chat/${user?.email}--${email}`, { headers: { Authorization: `Bearer ${localStorage.getItem('chat-app')}` } }).then(res => console.log(res.data)).catch(err=> console.log(err)  )
+    }
 
 
 
@@ -57,7 +57,7 @@ const chat=()=>{
 
             <div className="basis-1/2">
 
-            
+
 
                 <button onClick={chat} className='bg-[#5c3ba2] me-2 text-white px-3 py-1 rounded float-end hover:scale-105 transition-all ease-in-out duration-300 hover:shadow-lg'>{loading ? <><VscLoading className='inline text-lg animate-spin' /> </> : <>  Chat </>}</button>
 
