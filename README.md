@@ -22,7 +22,17 @@ Currently, two official plugins are available:
 
 
 
-## How to use
+# How to Run Locally
+
+Follow these steps to run the Chat App locally on your machine:
+
+1. **Clone the Repository:**
+2. **Navigate to the Project Directory:**
+3. **Install Dependencies:**
+4. **Start the Development Server:**
+5. **Also download the server side repo from my repositories to use it**
+6. **Open the Application in Your Browser:**
+
 
 
 
