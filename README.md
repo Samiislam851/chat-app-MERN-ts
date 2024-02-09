@@ -9,7 +9,7 @@ Currently, two official plugins are available:
 
 
 
-# Chat App Features:
+# Features:
 - **Account Management:** Users can create an account to access the chat application.
 - **User Search:** Users can search for other people to connect with.
 - **Friend Requests:** Users can send friend requests to other users.
@@ -22,20 +22,7 @@ Currently, two official plugins are available:
 
 
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
+## How to use
 
 
-   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-   },
-Replace `plugin:@typescript-eslint/recommended` with `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-Install `eslint-plugin-react` and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
 
