@@ -13,6 +13,7 @@ import NotFoundPage from './pages/NotFoundPage/NotFoundPage'
 import FriendRequests from './components/FriendRequests/FriendRequests'
 import Friends from './components/Firends/Firends'
 import SentRequests from './components/SentRequests/SentRequests'
+import axios from 'axios'
 type Props = {}
 
 const App = (props: Props) => {
@@ -52,6 +53,11 @@ const App = (props: Props) => {
         {
           path:'/dashboard/sent-requests',
           element: <SentRequests/>
+        },
+        {
+
+          path:'/dashboard/chat/:chatId',
+          element: <Chat></Chat>
         },
       ]
     },

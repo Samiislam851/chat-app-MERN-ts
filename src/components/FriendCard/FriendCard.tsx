@@ -5,6 +5,7 @@ import axios from 'axios';
 import { Context } from '../../Configs/ContextProvider';
 import toast from 'react-hot-toast';
 import { VscLoading } from 'react-icons/vsc';
+import { useNavigate } from 'react-router-dom';
 
 type Props = {
     friend: MongoUser,
@@ -24,10 +25,16 @@ const FriendCard = ({ friend, dbUser, setDbUser, setFriends, friends }: Props) =
     const { photoURL, name, _id, email } = friend;
     const [loading, setLoading] = useState(false)
     const [loadingCancel, setLoadingCancel] = useState(false)
-
+const navigate = useNavigate()
 
     const chat = () => {
-        axios.get(`http://localhost:3000/chat/${user?.email}--${email}`, { headers: { Authorization: `Bearer ${localStorage.getItem('chat-app')}` } }).then(res => console.log(res.data)).catch(err=> console.log(err)  )
+        axios.get(`http://localhost:3000/chat/${user?.email}--${email}`, { headers: { Authorization: `Bearer ${localStorage.getItem('chat-app')}` } }).then(res => {
+            
+
+        navigate(`/dashboard/chat/${res.data.chatId}`)
+        }).catch(err=> console.log(err)  )
+
+       
     }
 
 
