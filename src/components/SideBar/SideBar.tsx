@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { Context } from '../../Configs/ContextProvider'
 import { IoIosLogOut } from 'react-icons/io'
 import { Link } from 'react-router-dom'
-import { IoPersonAddOutline, IoPersonOutline } from 'react-icons/io5'
+import { IoChatboxEllipsesOutline, IoPersonAddOutline, IoPersonOutline } from 'react-icons/io5'
 import { BsPeopleFill } from 'react-icons/bs'
 import { FaArrowRight } from 'react-icons/fa'
 
@@ -25,19 +25,22 @@ const SideBar = (props: Props) => {
         <div className="flex flex-col max-w-sm h-screen border-e-2 ">
             {/* Top */}
             <div className="flex justify-start px-2 py-2 gap-2 items-center">
-               
+
                 <h3 className='text-gray-700 text-2xl font-bold'>ChitChatZ</h3>
             </div>
 
             {/* Middle */}
             <div className="flex-1 overflow-y-auto flex flex-col ">
-                {/* Content of the middle section */}
-                <div className="basis-1/2 overflow-y-auto p-2">
 
-                    chat list
-                </div>
                 <div className="basis-1/2 border-t-2 px-3">
                     <h4 className='text-sm text-gray-500 font-medium' >Options</h4>
+                    <Link to='/dashboard/chats' className='flex justify-start gap-2 text-base items-center text-gray-600 font-base  pt-2'>
+
+                        <div className='border-2 rounded-md p-1'>
+                        <IoChatboxEllipsesOutline />
+                        </div>
+                        <span>Chats</span>
+                    </Link>
                     <Link to='/dashboard/add-friend' className='flex justify-start gap-2 text-base items-center text-gray-600 font-base  pt-2'>
 
                         <div className='border-2 rounded-md p-1'>
@@ -48,21 +51,21 @@ const SideBar = (props: Props) => {
                     <Link to='/dashboard/friend-requests' className='flex justify-start gap-2 text-base items-center text-gray-600 font-base  pt-2'>
 
                         <div className='border-2 rounded-md p-1'>
-                        <IoPersonOutline />
+                            <IoPersonOutline />
                         </div>
                         <span>Friend Requests</span>
                     </Link>
                     <Link to='/dashboard/friends' className='flex justify-start gap-2 text-base items-center text-gray-600 font-base  pt-2'>
 
                         <div className='border-2 rounded-md p-1'>
-                        <BsPeopleFill />
+                            <BsPeopleFill />
                         </div>
                         <span>My Friends</span>
                     </Link>
                     <Link to='/dashboard/sent-requests' className='flex justify-start gap-2 text-base items-center text-gray-600 font-base  pt-2'>
 
                         <div className='border-2 rounded-md p-1'>
-                        <FaArrowRight />
+                            <FaArrowRight />
                         </div>
                         <span>Sent Requests</span>
                     </Link>
