@@ -25,7 +25,7 @@ const SideBar = (props: Props) => {
         <div className="flex flex-col max-w-sm h-screen border-e-2 ">
             {/* Top */}
             <div className="flex justify-start px-2 py-2 gap-2 items-center">
-                <img src="../logo.png" className="w-10 h-10" alt="logo" />
+               
                 <h3 className='text-gray-700 text-2xl font-bold'>ChitChatZ</h3>
             </div>
 
