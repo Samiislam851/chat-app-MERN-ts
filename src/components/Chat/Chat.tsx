@@ -5,6 +5,8 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { Context } from '../../Configs/ContextProvider'
 import { MongoUser } from '../../types/types'
 import { IoMdArrowBack } from 'react-icons/io'
+import { io } from "socket.io-client";
+
 
 interface Props { }
 interface inputObject {
@@ -18,14 +20,36 @@ interface Message {
   timeStamp: Date,
 }
 const Chat = (props: Props) => {
+
+
+
+
+
   const { chatId } = useParams()
   const { user } = useContext(Context)!
   const navigate = useNavigate()
   const [messages, setMessages] = useState<Message[]>([])
   const [secondUser, setSecondUser] = useState<MongoUser | null>(null)
-  console.log('chatId', chatId);
+
 
   const { register, handleSubmit, reset } = useForm<inputObject>();
+
+
+  ////// add socket connection  ///////
+
+  useEffect(() => {
+    const socket = io("http://localhost:3000/");
+    socket.on('connect', () => {
+      console.log('Connected to socket server');
+    });
+
+
+ 
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
 
 
 
@@ -84,7 +108,7 @@ const Chat = (props: Props) => {
         <div className='border-b-2 pb-1 mb-2'>
 
           <div className="flex flex-row w-full gap-3 ps-2 justify-start items-center text-gray-700">
-          <button className="text-white " title='back' onClick={() => navigate(-1)}>
+            <button className="text-white " title='back' onClick={() => navigate(-1)}>
               <IoMdArrowBack className="w-7 h-7 text-blue-500" />
             </button>
             <div className=''>
@@ -101,12 +125,12 @@ const Chat = (props: Props) => {
               <h3 className='text-xl font-medium'>{secondUser?.name}</h3>
               <h4 className='text-sm text-gray-500'>{secondUser?.email}</h4>
             </div>
-           
+
           </div>
         </div>
         <div className='overflow-y-scroll h-full  md:px-10 px-5 flex   '>
           <div id="chat-container" className=" w-full flex flex-col pb-2">
-            <div className="flex-grow"></div> {/* This div will push messages to the bottom */}
+            <div className="flex-grow"></div> {/*to push messages to the bottom */}
             {messages.map((message) => (
               <div key={message._id} className={`w-full mb-2 flex ${message.sender === user?.email ? 'justify-end' : 'justify-start'}`}>
                 <div title={new Date(message.timeStamp).toLocaleString()} className={`max-w-xs rounded-lg px-4 py-2 ${message.sender === user?.email ? 'bg-purple-600 text-white self-end' : 'bg-gray-300 text-black self-start'}`}>
