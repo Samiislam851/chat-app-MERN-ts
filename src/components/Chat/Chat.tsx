@@ -1,5 +1,5 @@
 import axios from 'axios'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Context } from '../../Configs/ContextProvider'
@@ -31,31 +31,57 @@ const Chat = (props: Props) => {
   const [messages, setMessages] = useState<Message[]>([])
   const [secondUser, setSecondUser] = useState<MongoUser | null>(null)
 
+  const [socketConnected, setSocketConnected] = useState<boolean>(false)
+  const [socket, setSocket] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(false)
+
+const [typing, setTyping] = useState(false)
+const [isTyping, setsTyping] = useState(false)
+
+
 
   const { register, handleSubmit, reset } = useForm<inputObject>();
 
 
-  ////// add socket connection  ///////
+  //////////////////// add socket connection  ///////
 
   useEffect(() => {
-    const socket = io("http://localhost:3000/");
-    socket.on('connect', () => {
+
+
+    const newSocket = io("http://localhost:3000/");
+
+    newSocket.on('connect', () => {
+      setSocketConnected(true)
+      setSocket(newSocket)
       console.log('Connected to socket server');
-    });
-
-
- 
+    }
+    )
+    newSocket.emit('setup', user);
 
     return () => {
-      socket.disconnect();
+      newSocket.disconnect();
     };
   }, []);
 
 
-
+  /////////////////////// fetching data logic //////////////
 
   useEffect(() => {
-    axios.get(`http://localhost:3000/messages/${chatId}`, { headers: { Authorization: `Bearer ${localStorage.getItem('chat-app')}` } }).then(res => setMessages(res.data)).catch(err => console.log(err))
+    setLoading(true)
+    axios.get(`http://localhost:3000/messages/${chatId}`, { headers: { Authorization: `Bearer ${localStorage.getItem('chat-app')}` } })
+
+      .then(res => {
+
+        setMessages(res.data)
+
+        socket?.emit('join-chat', chatId)
+        setLoading(false)
+      })
+
+      .catch(err => {
+        setLoading(false)
+        console.log(err)
+      })
   }, [])
 
 
@@ -69,17 +95,23 @@ const Chat = (props: Props) => {
         Authorization: `Bearer ${localStorage.getItem('chat-app')}`
       }
     })
-      .then(res => setSecondUser(res.data.user))
-      .catch(err => console.log(err)
+      .then(res => {
+        setSecondUser(res.data.user)
+        setLoading(false)
+      })
+      .catch(err => {
+        console.log(err)
+        setLoading(false)
+      }
       )
 
   }, [messages])
 
-
+  //////////////////////// send message function////////
   const onSubmit = async (data: inputObject) => {
     try {
 
-      await axios.post(
+      const res = await axios.post(
         `http://localhost:3000/send-message/${chatId}`,
         {
           message: data.message,
@@ -88,15 +120,58 @@ const Chat = (props: Props) => {
         { headers: { Authorization: `Bearer ${localStorage.getItem('chat-app')}` } }
       );
 
-      // Log success and reset the form
-      console.log('Message sent:', data.message);
+      //// Log success and reset the form
+      console.log('Message sent:', res.data.messageResponse);
+
+      const newMessageAndChat = {
+        chat: {
+          chatId,
+          users: [user?.email, secondUser?.email]
+        },
+        message: res.data.messageResponse
+      }
+
+      socket?.emit('new-message', newMessageAndChat)
+
       reset();
     } catch (error) {
-      // Log and handle the error
+      //// Log and handle the error
       console.error('Error sending message:', error);
     }
   };
 
+
+
+
+
+
+
+
+
+
+
+
+  // we want to run this side effect in any change in any state for receiving message
+  useEffect(() => {
+  socket?.on("message-received", (newMessageReceived: any) => {
+      //checking if the message is for this chat 
+
+      if (!chatId || chatId !== newMessageReceived.chatId) {
+        // if not of this opened chat give notification
+      } else {
+
+        console.log(messages);
+
+
+        setMessages((prevMessages) => [...prevMessages, newMessageReceived])
+      }
+
+    })
+  }, [socket])
+
+
+
+ 
 
   return (
 
@@ -128,18 +203,24 @@ const Chat = (props: Props) => {
 
           </div>
         </div>
-        <div className='overflow-y-scroll h-full  md:px-10 px-5 flex   '>
-          <div id="chat-container" className=" w-full flex flex-col pb-2">
-            <div className="flex-grow"></div> {/*to push messages to the bottom */}
-            {messages.map((message) => (
-              <div key={message._id} className={`w-full mb-2 flex ${message.sender === user?.email ? 'justify-end' : 'justify-start'}`}>
-                <div title={new Date(message.timeStamp).toLocaleString()} className={`max-w-xs rounded-lg px-4 py-2 ${message.sender === user?.email ? 'bg-purple-600 text-white self-end' : 'bg-gray-300 text-black self-start'}`}>
-                  {message.content}
+        {loading ? <div className='h-full'>
+          loading...
+        </div> : <>
+
+
+          <div className='overflow-y-scroll h-full  md:px-10 px-5 flex   '>
+            <div id="chat-container"  className="w-full flex flex-col pb-2">
+              <div className="flex-grow"></div>
+              {messages.map((message) => (
+                <div key={message._id} className={`w-full mb-2 flex ${message.sender === user?.email ? 'justify-end' : 'justify-start'}`}>
+                  <div title={new Date(message.timeStamp).toLocaleString()} className={`max-w-xs rounded-lg px-4 py-2 ${message.sender === user?.email ? 'bg-purple-600 text-white self-end' : 'bg-gray-300 text-black self-start'}`}>
+                    {message.content}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
+        </>}
 
 
         <div className="border-t-2 mt-2 pt-2">
