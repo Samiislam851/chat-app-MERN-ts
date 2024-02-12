@@ -7,19 +7,15 @@ import { MongoUser } from '../../types/types'
 import { IoMdArrowBack } from 'react-icons/io'
 import { io } from "socket.io-client";
 import Swal from 'sweetalert2'
+import { SocketContext } from '../../Configs/SocketContextprovider'
+import toast from 'react-hot-toast'
 
 
 interface Props { }
 interface inputObject {
   message: string,
 }
-interface Message {
-  _id: string,
-  chatId: string,
-  sender: string,
-  content: string,
-  timeStamp: Date,
-}
+
 const Chat = (props: Props) => {
 
 
@@ -28,12 +24,15 @@ const Chat = (props: Props) => {
 
   const { chatId } = useParams()
   const { user, logOut } = useContext(Context)!
+
+  const { socket, messages, setMessages } = useContext(SocketContext)!
+
   const navigate = useNavigate()
-  const [messages, setMessages] = useState<Message[]>([])
+
   const [secondUser, setSecondUser] = useState<MongoUser | null>(null)
 
   const [socketConnected, setSocketConnected] = useState<boolean>(false)
-  const [socket, setSocket] = useState<any>(null);
+  // const [socket, setSocket] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false)
 
   const [typing, setTyping] = useState(false)
@@ -44,30 +43,30 @@ const Chat = (props: Props) => {
   const { register, handleSubmit, reset } = useForm<inputObject>();
 
 
-  //////////////////// add socket connection  ///////
+  // //////////////////// add socket connection  ///////
 
-  useEffect(() => {
+  // useEffect(() => {
 
-    const newSocket = io("http://localhost:3000/", { query: { user: user?.email } });
-    newSocket.on('connect', () => {
-      setSocketConnected(true)
-      setSocket(newSocket)
-      // socket.on('typing', () => setsTyping(true))
+  //   const newSocket = io("http://localhost:3000/", { query: { user: user?.email } });
+  //   newSocket.on('connect', () => {
+  //     setSocketConnected(true)
+  //     setSocket(newSocket)
+  //     // socket.on('typing', () => setsTyping(true))
 
-      // socket.on('stop typing', () => setsTyping(false))
+  //     // socket.on('stop typing', () => setsTyping(false))
 
-      console.log('Connected to socket server');
-    }
-    )
-    newSocket.emit('setup', user);
+  //     console.log('Connected to socket server');
+  //   }
+  //   )
+  //   newSocket.emit('setup', user);
 
-    return () => {
-      newSocket.disconnect();
-    };
-  }, []);
+  //   return () => {
+  //     newSocket.disconnect();
+  //   };
+  // }, []);
 
 
-  /////////////////////// fetching data logic //////////////
+  // /////////////////////// fetching data logic //////////////
 
   useEffect(() => {
     setLoading(true)
@@ -119,37 +118,46 @@ const Chat = (props: Props) => {
 
   //////////////////////// send message function////////
   const onSubmit = async (data: inputObject) => {
-    try {
 
-      const res = await axios.post(
-        `/send-message/${chatId}`,
-        {
-          message: data.message,
-          sender: user?.email
-        },
-        { headers: { Authorization: `Bearer ${localStorage.getItem('chat-app')}` } }
-      );
+    if (data.message.trim() == "") {
 
-      //// Log success and reset the form
-      console.log('Message sent:', res.data.messageResponse);
-      setMessages((prevMessages) => [...prevMessages, res.data.messageResponse])
-      const newMessageAndChat = {
-        chat: {
-          chatId,
-          users: [user?.email, secondUser?.email]
-        },
-        message: res.data.messageResponse
-      }
+      toast.error('cannot send empty message')
 
-      socket?.emit('new-message', newMessageAndChat)
+    } else {
 
-      reset();
-    } catch (err : any) {
-      //// Log and handle the error
-      console.error('Error sending message:', err);
-         if (err.response.status === 401) {
-                    logOut()
-                }
+      try {
+
+        const res = await axios.post(
+          `/send-message/${chatId}`,
+          {
+            message: data.message,
+            sender: user?.email
+          },
+          { headers: { Authorization: `Bearer ${localStorage.getItem('chat-app')}` } }
+        );
+
+        //// Log success and reset the form
+        console.log('Message sent:', res.data.messageResponse);
+        setMessages((prevMessages) => [...prevMessages, res.data.messageResponse])
+        const newMessageAndChat = {
+          chat: {
+            chatId,
+            users: [user?.email, secondUser?.email]
+          },
+          message: res.data.messageResponse,
+          sender : user?.displayName
+        }
+
+        socket?.emit('new-message', newMessageAndChat)
+
+        reset();
+      } catch (err: any) {
+        //// Log and handle the error
+        console.error('Error sending message:', err);
+        if (err.response.status === 401) {
+          logOut()
+        }
+      } finally { }
     }
   };
 
@@ -164,31 +172,31 @@ const Chat = (props: Props) => {
 
 
 
-  // we want to run this side effect in any change in any state for receiving message
-  useEffect(() => {
-    socket?.on("message-received", (newMessageReceived: any) => {
-      //checking if the message is for this chat 
+  // // we want to run this side effect in any change in any state for receiving message
+  // useEffect(() => {
+  //   socket?.on("message-received", (newMessageReceived: any) => {
+  //     //checking if the message is for this chat 
 
-      if (chatId !== newMessageReceived.chatId) {
-        Swal.fire({
-          position: "top-end",
-          icon: "info",
-          title: `${newMessageReceived.sender.split('@')[0]} sent you a message`,
-          text: `${newMessageReceived.content}....`,
-          showConfirmButton: false,
-          timer: 2000
-        });
-      } else {
+  //     if (chatId !== newMessageReceived.chatId) {
+  //       Swal.fire({
+  //         position: "top-end",
+  //         icon: "info",
+  //         title: `${newMessageReceived.sender.split('@')[0]} sent you a message`,
+  //         text: `${newMessageReceived.content}....`,
+  //         showConfirmButton: false,
+  //         timer: 2000
+  //       });
+  //     } else {
 
-        console.log('newMessageReceived');
+  //       console.log('newMessageReceived');
 
 
-        setMessages((prevMessages) => [...prevMessages, newMessageReceived])
-      }
+  //       setMessages((prevMessages) => [...prevMessages, newMessageReceived])
+  //     }
 
-    })
-  },
-    [socket])
+  //   })
+  // },
+  // [socket])
 
 
 

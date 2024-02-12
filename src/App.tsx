@@ -15,6 +15,7 @@ import Friends from './components/Firends/Firends'
 import SentRequests from './components/SentRequests/SentRequests'
 import axios from 'axios'
 import Chats from './components/Chats/Chats'
+import { SocketContext } from './Configs/SocketContextprovider'
 type Props = {}
 
 const App = (props: Props) => {
@@ -23,6 +24,7 @@ const App = (props: Props) => {
   // Create an instance of axios with a baseURL
 
   axios.defaults.baseURL = `http://localhost:3000/`
+
 
 
 
