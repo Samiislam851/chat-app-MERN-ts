@@ -42,7 +42,7 @@ const AddFriend = (props: Props) => {
         } else {
 
             setLoading(true)
-            axios.post('http://localhost:3000/search-user',
+            axios.post('/search-user',
                 { inputValue, user },
                 {
                     headers: {
@@ -62,6 +62,7 @@ const AddFriend = (props: Props) => {
                     logOut()
                 }
 
+
             })
 
 
@@ -76,13 +77,20 @@ const AddFriend = (props: Props) => {
     const [dbUser, setDbUser] = useState<MongoUser | null>(null)
     useEffect(() => {
 
-        axios.get(`http://localhost:3000/get-single-user?email=${user?.email}`, {
+        axios.get(`/get-single-user?email=${user?.email}`, {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem('chat-app')}`
             }
         })
             .then(res => setDbUser(res.data.user))
-            .catch(err => console.log(err)
+            .catch(err => {
+
+                console.log(err);
+
+                if (err.response.status === 401) {
+                    logOut()
+                }
+            }
             )
 
     }, [])
@@ -102,7 +110,7 @@ const AddFriend = (props: Props) => {
                         placeholder="you@email.com or name"
                         className="w-full px-4 py-2 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:border-indigo-500"
                     />
-                    <button className="px-4 py-2 bg-[#81689D] transition-all ease-in-out duration-300 text-white rounded-md hover:bg-[#365486] focus:bg-[#365486d2] focus:outline-none flex items-center w-fit scale-95">
+                    <button className=" border border-gray-500  px-4 py-2 bg-[#695db8] transition-all ease-in-out duration-300 text-white rounded-md hover:scale-[1.01] hover:bg-[#6258e9] focus:bg-[#365486d2] focus:outline-none flex gap-1 items-center w-fit scale-95">
                         <CiSearch /> <span>Search</span>
                     </button>
                 </div>
@@ -123,13 +131,13 @@ const AddFriend = (props: Props) => {
                 {searchedUsers[0] ? <>
                     <div className='max-w-md  mx-auto'>
 
-                        <h3 className='text-sm text-[#81689D] pb-1'>Search Result : </h3>
+                        <h3 className='text-sm  pb-1 text-white'>Search Result : </h3>
                         <div className='border-t pt-0'>
 
 
                             <ul className='list-none '>
                                 {
-                                    searchedUsers.map((searchedUser: MongoUser, i) => <SearchedPeopleCard key={i} dbUser={dbUser}  setDbUser={setDbUser}  searchUser={searchedUser} />)
+                                    searchedUsers.map((searchedUser: MongoUser, i) => <SearchedPeopleCard key={i} dbUser={dbUser} setDbUser={setDbUser} searchUser={searchedUser} />)
                                 }
 
                             </ul>
@@ -148,7 +156,7 @@ const AddFriend = (props: Props) => {
                 </>}
             </> : <>
 
-                <h3 className='text-xl text-[#365486] opacity-70 py-20 text-center'>Search someone to add as a friend!</h3>
+                <h3 className='text-xl text-[#b6d0ff]  py-20 text-center'>Search someone to add as a friend!</h3>
 
             </>}</>}
 

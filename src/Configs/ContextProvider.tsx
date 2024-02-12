@@ -4,8 +4,7 @@ import { GoogleAuthProvider, createUserWithEmailAndPassword, getAuth, onAuthStat
 import { UserCredential } from "firebase/auth";
 import { MongoUser, User } from '../types/types';
 import app from '../utils/firebase';
-
-
+import io from 'socket.io-client'
 //////////////// interfaces and types ////////////////////////
 type Props = {
     children: ReactNode
@@ -24,7 +23,10 @@ export interface valueType {
     addUserDetails: (name: string, photoURL: string) => Promise<void>,
     setUser: React.Dispatch<React.SetStateAction<User | null>>,
     dbUser: MongoUser | null,
-    setDbUser: React.Dispatch<React.SetStateAction<MongoUser | null>>
+    setDbUser: React.Dispatch<React.SetStateAction<MongoUser | null>>,
+    notification : any,
+    setNotification: React.Dispatch<any>,
+    socket : any
 }
 
 
@@ -41,7 +43,7 @@ export const Context = createContext<valueType | null>(null)
 export default function ContextProvider({ children }: Props) {
 
     const [first, setFirst] = useState<boolean>(true)
-    const [loading, setLoading] = useState<boolean>(true)
+    const [loading, setLoading] = useState<boolean>(false)
     const [user, setUser] = useState<User | null>(null)
     const [dbUser, setDbUser] = useState<MongoUser | null>(null)
 
@@ -55,6 +57,9 @@ export default function ContextProvider({ children }: Props) {
         return signInWithPopup(auth, googleProvider)
     }
 
+
+
+
     useEffect(() => {
         const unsubscribe = () => {
             onAuthStateChanged(auth, (loggedUser: User | null) => {
@@ -62,8 +67,6 @@ export default function ContextProvider({ children }: Props) {
                 setLoading(false)
             })
         }
-
-
         // const currentUser = auth.currentUser;
         // if (currentUser) {
         //     setUser(currentUser);
@@ -107,6 +110,38 @@ export default function ContextProvider({ children }: Props) {
     }
 
 
+const [notification, setNotification] = useState<any>([])
+
+
+
+useEffect(() => {
+    console.log(notification);
+}, [notification])
+
+//////////////////////////  socket connection /////////////
+const [socket, setSocket] = useState<any>(null)
+
+// useEffect(() => {
+
+// if(user){
+//     const newSocket = io("/");
+
+//     newSocket.on('connect', () => {
+    
+//       setSocket(newSocket)
+
+
+//       console.log('Connected to socket server');
+//     }
+//     )
+//     newSocket.emit('setup', user);
+
+// }
+    
+//     return () => {
+//       // newSocket.disconnect();
+//     };
+//   }, [user]);
 
 
 
@@ -115,10 +150,37 @@ export default function ContextProvider({ children }: Props) {
 
 
 
+//   useEffect(() => {
+//     socket?.on('message-received', (newMessageReceived: any) => {
+//       if (chatId !== newMessageReceived.chatId) {
+//         Swal.fire({
+//           position: "top-end",
+//           icon: "info",
+//           title: `${newMessageReceived.sender.split('@')[0]} sent you a message`,
+//           text:`${newMessageReceived.content}....`,
+//           showConfirmButton: false,
+//           timer: 2000
+//         });
+//       } else {
+//         setMessages(prevMessages => [...prevMessages, newMessageReceived]);
+//       }
+//     });
+//   }, [socket]);
+
+
+
+
+
+
+
+
+
+
+
+/////////////////////////////////////////////////////////////
     const value: valueType = {
         first, setFirst, googleLogin,  logOut,
-        loading, setLoading, emailRegister, emailSignIn, addUserDetails,user, setUser, dbUser, setDbUser
-    }
+        loading, setLoading, emailRegister, emailSignIn, addUserDetails,user, setUser, dbUser, setDbUser,setNotification,notification,  socket }
 
     return (
         <Context.Provider value={value}>

@@ -14,50 +14,63 @@ import FriendRequests from './components/FriendRequests/FriendRequests'
 import Friends from './components/Firends/Firends'
 import SentRequests from './components/SentRequests/SentRequests'
 import axios from 'axios'
+import Chats from './components/Chats/Chats'
 type Props = {}
 
 const App = (props: Props) => {
 
+
+  // Create an instance of axios with a baseURL
+
+  axios.defaults.baseURL = `http://localhost:3000/`
+
+
+
   const router = createBrowserRouter([
     {
       path: '/',
-      element: <Navigate to='/dashboard' />,
-      errorElement: <NotFoundPage/>,
+      element: <RestrictedPublicRoute><Login /></RestrictedPublicRoute>,
+      errorElement: <NotFoundPage />,
 
     },
     {
       path: '/dashboard/',
-      element: <PrivateRoute> <Dashboard /></PrivateRoute> ,
-      errorElement: <NotFoundPage/>,
+      element: <PrivateRoute> <Dashboard /></PrivateRoute>,
+      errorElement: <NotFoundPage />,
       children: [
         {
-          path:'/dashboard/',
-          element: <DefaultHome/>
+          path: '/dashboard/',
+          element: <DefaultHome />
         },
         {
-          path:'/dashboard/chat',
-          element: <Chat/>
+          path: '/dashboard/chat',
+          element: <Chat />
         },
         {
-          path:'/dashboard/add-friend',
-          element: <AddFriend/>
+          path: '/dashboard/add-friend',
+          element: <AddFriend />
         },
         {
-          path:'/dashboard/friend-requests',
-          element: <FriendRequests/>
+          path: '/dashboard/friend-requests',
+          element: <FriendRequests />
         },
         {
-          path:'/dashboard/friends',
-          element: <Friends/>
+          path: '/dashboard/friends',
+          element: <Friends />
         },
         {
-          path:'/dashboard/sent-requests',
-          element: <SentRequests/>
+          path: '/dashboard/sent-requests',
+          element: <SentRequests />
         },
         {
 
-          path:'/dashboard/chat/:chatId',
+          path: '/dashboard/chat/:chatId',
           element: <Chat></Chat>
+        },
+        {
+
+          path: '/dashboard/chats/',
+          element: <Chats />
         },
       ]
     },

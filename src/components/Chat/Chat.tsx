@@ -6,6 +6,7 @@ import { Context } from '../../Configs/ContextProvider'
 import { MongoUser } from '../../types/types'
 import { IoMdArrowBack } from 'react-icons/io'
 import { io } from "socket.io-client";
+import Swal from 'sweetalert2'
 
 
 interface Props { }
@@ -26,7 +27,7 @@ const Chat = (props: Props) => {
 
 
   const { chatId } = useParams()
-  const { user } = useContext(Context)!
+  const { user, logOut } = useContext(Context)!
   const navigate = useNavigate()
   const [messages, setMessages] = useState<Message[]>([])
   const [secondUser, setSecondUser] = useState<MongoUser | null>(null)
@@ -35,8 +36,8 @@ const Chat = (props: Props) => {
   const [socket, setSocket] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false)
 
-const [typing, setTyping] = useState(false)
-const [isTyping, setsTyping] = useState(false)
+  const [typing, setTyping] = useState(false)
+  const [isTyping, setsTyping] = useState(false)
 
 
 
@@ -47,12 +48,14 @@ const [isTyping, setsTyping] = useState(false)
 
   useEffect(() => {
 
-
-    const newSocket = io("http://localhost:3000/");
-
+    const newSocket = io("http://localhost:3000/", { query: { user: user?.email } });
     newSocket.on('connect', () => {
       setSocketConnected(true)
       setSocket(newSocket)
+      // socket.on('typing', () => setsTyping(true))
+
+      // socket.on('stop typing', () => setsTyping(false))
+
       console.log('Connected to socket server');
     }
     )
@@ -68,7 +71,7 @@ const [isTyping, setsTyping] = useState(false)
 
   useEffect(() => {
     setLoading(true)
-    axios.get(`http://localhost:3000/messages/${chatId}`, { headers: { Authorization: `Bearer ${localStorage.getItem('chat-app')}` } })
+    axios.get(`/messages/${chatId}`, { headers: { Authorization: `Bearer ${localStorage.getItem('chat-app')}` } })
 
       .then(res => {
 
@@ -79,8 +82,12 @@ const [isTyping, setsTyping] = useState(false)
       })
 
       .catch(err => {
+
         setLoading(false)
         console.log(err)
+        if (err.response.status === 401) {
+          logOut()
+        }
       })
   }, [])
 
@@ -90,7 +97,7 @@ const [isTyping, setsTyping] = useState(false)
     const secondUsersMessage = messages?.find(chatUser => chatUser?.sender != user?.email)
     const user2Email = secondUsersMessage?.sender
 
-    axios.get(`http://localhost:3000/get-single-user?email=${user2Email}`, {
+    axios.get(`/get-single-user?email=${user2Email}`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('chat-app')}`
       }
@@ -101,6 +108,9 @@ const [isTyping, setsTyping] = useState(false)
       })
       .catch(err => {
         console.log(err)
+        if (err.response.status === 401) {
+          logOut()
+        }
         setLoading(false)
       }
       )
@@ -112,7 +122,7 @@ const [isTyping, setsTyping] = useState(false)
     try {
 
       const res = await axios.post(
-        `http://localhost:3000/send-message/${chatId}`,
+        `/send-message/${chatId}`,
         {
           message: data.message,
           sender: user?.email
@@ -122,7 +132,7 @@ const [isTyping, setsTyping] = useState(false)
 
       //// Log success and reset the form
       console.log('Message sent:', res.data.messageResponse);
-
+      setMessages((prevMessages) => [...prevMessages, res.data.messageResponse])
       const newMessageAndChat = {
         chat: {
           chatId,
@@ -134,9 +144,12 @@ const [isTyping, setsTyping] = useState(false)
       socket?.emit('new-message', newMessageAndChat)
 
       reset();
-    } catch (error) {
+    } catch (err : any) {
       //// Log and handle the error
-      console.error('Error sending message:', error);
+      console.error('Error sending message:', err);
+         if (err.response.status === 401) {
+                    logOut()
+                }
     }
   };
 
@@ -153,25 +166,46 @@ const [isTyping, setsTyping] = useState(false)
 
   // we want to run this side effect in any change in any state for receiving message
   useEffect(() => {
-  socket?.on("message-received", (newMessageReceived: any) => {
+    socket?.on("message-received", (newMessageReceived: any) => {
       //checking if the message is for this chat 
 
-      if (!chatId || chatId !== newMessageReceived.chatId) {
-        // if not of this opened chat give notification
+      if (chatId !== newMessageReceived.chatId) {
+        Swal.fire({
+          position: "top-end",
+          icon: "info",
+          title: `${newMessageReceived.sender.split('@')[0]} sent you a message`,
+          text: `${newMessageReceived.content}....`,
+          showConfirmButton: false,
+          timer: 2000
+        });
       } else {
 
-        console.log(messages);
+        console.log('newMessageReceived');
 
 
         setMessages((prevMessages) => [...prevMessages, newMessageReceived])
       }
 
     })
-  }, [socket])
+  },
+    [socket])
 
 
 
- 
+
+
+
+  const typingHandler = () => {
+    if (!socketConnected) return
+
+    if (!typing) setTyping(true)
+    socket.emit('typing', chatId)
+
+
+    /// set it later
+
+  }
+
 
   return (
 
@@ -179,12 +213,15 @@ const [isTyping, setsTyping] = useState(false)
 
 
 
-      <div className="flex flex-col h-screen pt-2 pb-5 flex-end">
-        <div className='border-b-2 pb-1 mb-2'>
+      <div className="flex flex-col h-screen   flex-end">
 
-          <div className="flex flex-row w-full gap-3 ps-2 justify-start items-center text-gray-700">
+
+
+        <div className='border-b border-gray-400 border-opacity-50  mb-2'>
+
+          <div className="py-2 flex flex-row w-full gap-3 ps-2 justify-start items-center text-gray-300 backdrop-blur-md bg-gray-300 bg-opacity-10 ">
             <button className="text-white " title='back' onClick={() => navigate(-1)}>
-              <IoMdArrowBack className="w-7 h-7 text-blue-500" />
+              <IoMdArrowBack className="w-7 h-7 text-blue-300" />
             </button>
             <div className=''>
 
@@ -193,12 +230,12 @@ const [isTyping, setsTyping] = useState(false)
                 style={{ backgroundImage: `url(${secondUser?.photoURL})` }}
                 className="md:w-14 md:h-14 bg-cover bg-center rounded-full "
               >
-                {/* <img src={user?.photoURL!} className="w-full h-full" alt="" /> */}
+
               </div>
             </div>
             <div className=''>
-              <h3 className='text-xl font-medium'>{secondUser?.name}</h3>
-              <h4 className='text-sm text-gray-500'>{secondUser?.email}</h4>
+              <h3 className='text-xl font-medium text-gray-300'>{secondUser?.name}</h3>
+              <h4 className='text-sm text-gray-300'>{secondUser?.email}</h4>
             </div>
 
           </div>
@@ -209,7 +246,7 @@ const [isTyping, setsTyping] = useState(false)
 
 
           <div className='overflow-y-scroll h-full  md:px-10 px-5 flex   '>
-            <div id="chat-container"  className="w-full flex flex-col pb-2">
+            <div id="chat-container" className="w-full flex flex-col pb-2">
               <div className="flex-grow"></div>
               {messages.map((message) => (
                 <div key={message._id} className={`w-full mb-2 flex ${message.sender === user?.email ? 'justify-end' : 'justify-start'}`}>
@@ -223,7 +260,7 @@ const [isTyping, setsTyping] = useState(false)
         </>}
 
 
-        <div className="border-t-2 mt-2 pt-2">
+        <div className="border-t border-gray-400 border-opacity-50 backdrop-blur-md mt-1 py-4 bg-gray-500 bg-opacity-20">
           {/* Send message form */}
           <form onSubmit={handleSubmit(onSubmit)} className="max-w-md mx-auto flex gap-2 items-center justify-center">
             {/* Input field with register hook */}
@@ -240,6 +277,7 @@ const [isTyping, setsTyping] = useState(false)
           </form>
         </div>
       </div>
+
     </>
   )
 }

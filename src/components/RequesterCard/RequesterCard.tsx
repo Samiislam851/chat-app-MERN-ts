@@ -11,7 +11,7 @@ type Props = {
     requesters: MongoUser[],
     dbUser: MongoUser | null,
     setDbUser: React.Dispatch<React.SetStateAction<MongoUser | null>>,
-    setRequesters: React.Dispatch<React.SetStateAction<MongoUser[]>>
+    setRequesters: React.Dispatch<React.SetStateAction<MongoUser [] | null>>
 }
 
 const RequesterCard = ({ requester, dbUser, setDbUser, setRequesters, requesters }: Props) => {
@@ -19,7 +19,7 @@ const RequesterCard = ({ requester, dbUser, setDbUser, setRequesters, requesters
 
     console.log('.,...dADVASDVA.S D.......', dbUser);
 
-    const { user } = useContext(Context)!
+    const { user, logOut } = useContext(Context)!
     // Update the destructure to use searchUser
     const { photoURL, name, _id, email } = requester;
     const [loading, setLoading] = useState(false)
@@ -31,7 +31,7 @@ const RequesterCard = ({ requester, dbUser, setDbUser, setRequesters, requesters
 
         try {
             setLoading(true)
-            const res = await axios.post(`http://localhost:3000/accept-request?user1email=${user?.email}&&user2email=${email}`, { user }, {
+            const res = await axios.post(`/accept-request?user1email=${user?.email}&&user2email=${email}`, { user }, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('chat-app')}`
                 }
@@ -51,8 +51,11 @@ const RequesterCard = ({ requester, dbUser, setDbUser, setRequesters, requesters
 
 
 
-        } catch (error) {
+        } catch (error : any) {
             console.log(error);
+            if (error.response.status === 401) {
+                logOut()
+            }
 
         } finally {
             setLoading(false)
@@ -66,7 +69,7 @@ const RequesterCard = ({ requester, dbUser, setDbUser, setRequesters, requesters
     const cancelRequest = async () => {
         try {
             setLoadingCancel(true)
-            const res = await axios.post(`http://localhost:3000/cancel-request?user1email=${user?.email}&&user2email=${email}`, { user }, {
+            const res = await axios.post(`/cancel-request?user1email=${user?.email}&&user2email=${email}`, { user }, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('chat-app')}`
                 }
@@ -81,8 +84,10 @@ const RequesterCard = ({ requester, dbUser, setDbUser, setRequesters, requesters
 
         
 
-        } catch (error) {
+        } catch (error : any) {
             console.log(error);
+
+            if(error.response.status == 401) logOut()
 
         } finally {
             setLoadingCancel(false)
@@ -104,7 +109,7 @@ const RequesterCard = ({ requester, dbUser, setDbUser, setRequesters, requesters
 
 
     return (
-        <div className='flex items-center justify-between border-t py-2'>
+        <div className='flex items-center justify-between border-t  p-2 bg-white rounded-lg mt-2'>
             <div className="basis-1/2 flex gap-2">
                 <div style={{ backgroundImage: `url('${photoURL}')` }} className='w-[50px] overflow-hidden rounded-full h-[50px] hover:scale-[5] md:hover:scale-[3] md:hover:ms-[-110px] md:hover:me-[100px]  hover:translate-x-24 transition-all ease-in-out duration-300 border  border-gray-300 flex justify-center items-center bg-cover bg-center'>
                     {/* <img src={image ? image : ''} className='w-full ' alt={name ? name : ''} /> */}

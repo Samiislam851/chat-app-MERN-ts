@@ -4,8 +4,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { Context } from '../../Configs/ContextProvider';
 import { MongoUser } from '../../types/types';
-import RequestedPersonCard from '../RequestedPersonCard/RequestedPersonCard';
-
+import ChatsCard from '../ChatsCard/ChatsCard';
 
 
 type Props = {}
@@ -15,7 +14,7 @@ type inputObject = {
 
 
 
-const SentRequests = (props: Props) => {
+const Chats = (props: Props) => {
 
 
 
@@ -23,7 +22,7 @@ const SentRequests = (props: Props) => {
     const { user, logOut } = useContext(Context)!
     const [loading, setLoading] = useState<boolean>(false)
 
-    const [requestedPersons, setRequestedPersons] = useState<MongoUser[]>([])
+    const [chats, setChats] = useState<any[] | null>(null)
 
 
 
@@ -32,27 +31,35 @@ const SentRequests = (props: Props) => {
     const [dbUser, setDbUser] = useState<MongoUser | null>(null)
     useEffect(() => {
         setLoading(true)
-        axios.get(`/get-sent-requests?email=${user?.email}`, {
+        axios.get(`/get-chats?email=${user?.email}`, {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem('chat-app')}`
             }
         })
             .then(res => {
 
+                console.log('res.data.chats', res.data.chatsFinal);
 
-                setRequestedPersons(res.data.users)
+                setChats(res.data.chatsFinal)
                 setLoading(false)
 
             })
             .catch(err => {
-              
+
                 setLoading(false)
+                if (err.response.status === 401) {
+                    logOut()
+                }
                 console.log(err)
-                if(err.response.status == 401) logOut()
+                
             }
             )
 
     }, [])
+
+
+
+
 
 
     return (
@@ -72,29 +79,33 @@ const SentRequests = (props: Props) => {
 
                 <div className='max-w-md  mx-auto'>
 
-                    <h3 className='text-sm text-[#81689D] pb-1'>Sent Requests: </h3>
+                    <h3 className='text-2xl text-center text-[#81689D] pb-1'>Chat history </h3>
                     <div className='border-t pt-0'>
 
-                        {!requestedPersons[0] && <div className='text-xl text-center py-10 text-gray-500'>
-                            No Sent requests
-                        </div>}
-                        <ul className='list-none '>
-                            {
+                        {!chats ? <div className='text-xl text-center py-10 text-gray-500'>
+                            No Chats
+                        </div> :
+                            <ul className='list-none '>
+                                {
 
 
-                                /////////////////// create an array of requested users then show them here
+                                    /////////////////// create an array of requested users then show them here
 
-                                requestedPersons?.map((requestedPerson: MongoUser, i: number) => <RequestedPersonCard key={i} dbUser={dbUser} setDbUser={setDbUser} requestedPersons={requestedPersons} setRequestedPersons={setRequestedPersons} requestedPerson={requestedPerson} />)
-                            }
+                                    chats?.map((chat: object|null, i: number) => <ChatsCard key={i} chat={chat} />)
+                                }
 
-                        </ul>
+                            </ul>
+                        }
                     </div>
                 </div>
 
-            }
 
+
+
+
+            }
         </div >
     )
 }
 
-export default SentRequests
+export default Chats

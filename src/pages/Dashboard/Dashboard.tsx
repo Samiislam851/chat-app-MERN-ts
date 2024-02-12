@@ -9,13 +9,13 @@ const Dashboard = (props: Props) => {
         <div className='flex w-screen'>
 
             <div className="">
-               <SideBar/>
+                <SideBar />
             </div>
 
             <div className="flex-grow">
-
-                <Outlet />
-
+                <div className='background min-h-screen'>
+                    <Outlet />
+                </div>
             </div>
         </div>
     )

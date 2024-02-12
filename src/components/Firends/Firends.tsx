@@ -23,7 +23,7 @@ const Friends = (props: Props) => {
     const { user, logOut } = useContext(Context)!
     const [loading, setLoading] = useState<boolean>(false)
 
-    const [friends, setFriends] = useState<MongoUser[]>([])
+    const [friends, setFriends] = useState<MongoUser[] | null>(null)
 
 
 
@@ -32,7 +32,7 @@ const Friends = (props: Props) => {
     const [dbUser, setDbUser] = useState<MongoUser | null>(null)
     useEffect(() => {
         setLoading(true)
-        axios.get(`http://localhost:3000/get-friends?email=${user?.email}`, {
+        axios.get(`/get-friends?email=${user?.email}`, {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem('chat-app')}`
             }
@@ -48,6 +48,9 @@ const Friends = (props: Props) => {
 
                 setLoading(false)
                 console.log(err)
+                if (err.response.status === 401) {
+                    logOut()
+                }
             }
             )
 
@@ -80,22 +83,23 @@ const Friends = (props: Props) => {
 
 
                         {
-                       !friends[0] && <div className='text-xl text-center py-10 text-gray-500'>
-                            No friends. Make some to start chatting
-                        </div>
+                            !friends ? <div className='text-xl text-center py-10 text-gray-500'>
+                                No friends. Make some to start chatting
+                            </div>
+                                :
+
+
+                                <ul className='list-none '>
+                                    {
+
+
+                                        /////////////////// create an array of requested users then show them here
+
+                                        friends?.map((friend: MongoUser, i: number) => <FriendCard key={i} dbUser={dbUser} setDbUser={setDbUser} friends={friends} setFriends={setFriends} friend={friend} />)
+                                    }
+
+                                </ul>
                         }
-
-
-                        <ul className='list-none '>
-                            {
-
-
-                                /////////////////// create an array of requested users then show them here
-
-                                friends?.map((friend: MongoUser, i: number) => <FriendCard key={i} dbUser={dbUser} setDbUser={setDbUser} friends={friends} setFriends={setFriends} friend={friend} />)
-                            }
-
-                        </ul>
                     </div>
                 </div>
 

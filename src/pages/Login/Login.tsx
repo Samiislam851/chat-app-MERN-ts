@@ -29,13 +29,13 @@ type inputObject = {
 
 export default function page({ }: Props) {
 
-  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(false)
   const contextValue = useContext<valueType | null>(Context)
 
 
 
 
-  const { loading, setLoading, user, setUser, logOut, emailSignIn, setDbUser, dbUser } = contextValue!
+  const {  user, setUser, logOut, emailSignIn, setDbUser, dbUser } = contextValue!
 
 
   console.log('DBUSER :::::::::::::::::::', dbUser);
@@ -49,7 +49,7 @@ export default function page({ }: Props) {
     // save user to DB
 
     try {
-      const res = await axios.post('http://localhost:3000/login', user)
+      const res = await axios.post('/login', user)
 
       if (res.status == 200) {
 
@@ -62,11 +62,11 @@ export default function page({ }: Props) {
         localStorage.setItem('chat-app', res.data.token)
 
       } else {
-        await logOut()
+       
       }
 
     } catch (error) {
-
+      await logOut()
     } finally {
       setLoading(false)
     }
