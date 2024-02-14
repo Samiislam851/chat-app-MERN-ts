@@ -108,7 +108,7 @@ const AddFriend = (props: Props) => {
                     <input {...register('input')}
                         type="text"
                         placeholder="you@email.com or name"
-                        className="w-full px-4 py-2 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:border-indigo-500"
+                        className="w-full border border-gray-500 bg-white bg-opacity-[.05] border-s px-5 text-gray-300 p-2 backdrop-blur-md rounded-lg rounded-3xl focus:outline-none focus:border-indigo-500 "
                     />
                     <button className=" border border-gray-500  px-4 py-2 bg-[#695db8] transition-all ease-in-out duration-300 text-white rounded-md hover:scale-[1.01] hover:bg-[#6258e9] focus:bg-[#365486d2] focus:outline-none flex gap-1 items-center w-fit scale-95">
                         <CiSearch /> <span>Search</span>

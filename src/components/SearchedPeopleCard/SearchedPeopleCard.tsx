@@ -78,31 +78,20 @@ const [loading, setLoading] = useState(false)
             setLoading(false)
         }
 
-
-
     }
 
 
 
-
-
-
-
-
-
-
-
-
     return (
-        <div className='flex items-center justify-between border-t  p-2 bg-white rounded-lg mt-2 '>
+        <div className='flex items-center justify-between border-t border-gray-500 bg-white bg-opacity-15 border-s  p-2 backdrop-blur-[2px]  rounded-lg mt-2  hover:-me-5 transition-all ease-in-out  duration-300 '>
             <div className="basis-1/2 flex gap-2">
                 <div style={{ backgroundImage: `url('${photoURL}')` }} className='w-[50px] overflow-hidden rounded-full h-[50px] hover:scale-[5] md:hover:scale-[5] md:hover:ms-[-110px] md:hover:me-[200px]  hover:translate-x-24 transition-all ease-in-out duration-300 border  border-gray-300 flex justify-center items-center bg-cover bg-center'>
                     {/* <img src={image ? image : ''} className='w-full ' alt={name ? name : ''} /> */}
 
                 </div>
                 <div className="">
-                    <h3 className='text-gray-700 text-lg'>{name}</h3>
-                    <h3 className='text-gray-500 text-xs'>{email}</h3>
+                    <h3 className='text-gray-200 text-lg'>{name}</h3>
+                    <h3 className='text-gray-300 text-xs'>{email}</h3>
                 </div>
             </div>
 
@@ -112,7 +101,7 @@ const [loading, setLoading] = useState(false)
                     <button onClick={cancelRequest} className='bg-[#365486] text-white px-3 py-1 rounded float-end hover:scale-105 transition-all ease-in-out duration-300 opacity-50 hover:shadow-lg'>{loading?<><VscLoading className='inline text-lg animate-spin' /> </>:<>Request Sent</>}  </button>
                 </>}
                 {dbUser?.friends!.includes(email) && <>
-                    <button disabled className='bg-[#5a37a5] text-white px-3 py-1 rounded float-end hover:scale-105 transition-all ease-in-out duration-300 opacity-50 hover:shadow-lg'>{loading?<><VscLoading className='inline text-lg animate-spin' /> </>:<>Already Friends</>}  </button>
+                    <button disabled className='text-[#cecece] text-white px-3 py-1 rounded float-end transition-all ease-in-out duration-300  '>{loading?<><VscLoading className='inline text-lg animate-spin' /> </>:<>Already Friends</>}  </button>
                 </>}
                 {!dbUser?.pendingRequests!.includes(email) && !dbUser?.friends!.includes(email) && <>
                     <button onClick={addFriend} className='bg-[#365486] text-white px-3 py-1 rounded float-end hover:scale-105 transition-all ease-in-out duration-300 hover:shadow-lg'>{loading?<><VscLoading className='inline text-lg animate-spin' /> </>:<>  Add friend</>}</button>

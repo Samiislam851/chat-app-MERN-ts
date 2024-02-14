@@ -5,6 +5,7 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { Context } from '../../Configs/ContextProvider';
 import { MongoUser } from '../../types/types';
 import RequestedPersonCard from '../RequestedPersonCard/RequestedPersonCard';
+import { SocketContext } from '../../Configs/SocketContextProvider';
 
 
 
@@ -21,9 +22,12 @@ const SentRequests = (props: Props) => {
 
 
     const { user, logOut } = useContext(Context)!
+
+    const {requestedPersons,setRequestedPersons} = useContext(SocketContext)!
+    
     const [loading, setLoading] = useState<boolean>(false)
 
-    const [requestedPersons, setRequestedPersons] = useState<MongoUser[]>([])
+
 
 
 
@@ -72,7 +76,7 @@ const SentRequests = (props: Props) => {
 
                 <div className='max-w-md  mx-auto'>
 
-                    <h3 className='text-sm text-[#81689D] pb-1'>Sent Requests: </h3>
+                    <h3 className='text-sm text-[#FFFFFF] pb-1'>Sent Requests: </h3>
                     <div className='border-t pt-0'>
 
                         {!requestedPersons[0] && <div className='text-xl text-center py-10 text-gray-500'>

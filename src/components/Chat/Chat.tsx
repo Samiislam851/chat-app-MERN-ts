@@ -7,8 +7,10 @@ import { MongoUser } from '../../types/types'
 import { IoMdArrowBack } from 'react-icons/io'
 import { io } from "socket.io-client";
 import Swal from 'sweetalert2'
-import { SocketContext } from '../../Configs/SocketContextprovider'
+
 import toast from 'react-hot-toast'
+import { AiOutlineLoading3Quarters } from 'react-icons/ai'
+import { SocketContext } from '../../Configs/SocketContextProvider'
 
 
 interface Props { }
@@ -21,18 +23,22 @@ const Chat = (props: Props) => {
 
 
 
+  const [isOnline, setIsOnline] = useState<boolean>(false)
+
+
+
+
 
   const { chatId } = useParams()
   const { user, logOut } = useContext(Context)!
 
-  const { socket, messages, setMessages } = useContext(SocketContext)!
+  const { socket, messages, onlineUsers, setMessages } = useContext(SocketContext)!
 
   const navigate = useNavigate()
 
-  const [secondUser, setSecondUser] = useState<MongoUser | null>(null)
+  const [secondUser, setSecondUser] = useState<{ id: string, name: string, photoURL: string, email: string } | null>(null)
+  const [users, setUsers] = useState<{ id: string, name: string, photoURL: string, email: string }[] | null>(null)
 
-  const [socketConnected, setSocketConnected] = useState<boolean>(false)
-  // const [socket, setSocket] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false)
 
   const [typing, setTyping] = useState(false)
@@ -43,27 +49,7 @@ const Chat = (props: Props) => {
   const { register, handleSubmit, reset } = useForm<inputObject>();
 
 
-  // //////////////////// add socket connection  ///////
-
-  // useEffect(() => {
-
-  //   const newSocket = io("http://localhost:3000/", { query: { user: user?.email } });
-  //   newSocket.on('connect', () => {
-  //     setSocketConnected(true)
-  //     setSocket(newSocket)
-  //     // socket.on('typing', () => setsTyping(true))
-
-  //     // socket.on('stop typing', () => setsTyping(false))
-
-  //     console.log('Connected to socket server');
-  //   }
-  //   )
-  //   newSocket.emit('setup', user);
-
-  //   return () => {
-  //     newSocket.disconnect();
-  //   };
-  // }, []);
+ 
 
 
   // /////////////////////// fetching data logic //////////////
@@ -74,9 +60,9 @@ const Chat = (props: Props) => {
 
       .then(res => {
 
-        setMessages(res.data)
+        setMessages(res.data.messages)
+        setUsers(res.data.users)
 
-        socket?.emit('join-chat', chatId)
         setLoading(false)
       })
 
@@ -93,30 +79,30 @@ const Chat = (props: Props) => {
 
 
   useEffect(() => {
-    const secondUsersMessage = messages?.find(chatUser => chatUser?.sender != user?.email)
-    const user2Email = secondUsersMessage?.sender
 
-    axios.get(`/get-single-user?email=${user2Email}`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('chat-app')}`
-      }
-    })
-      .then(res => {
-        setSecondUser(res.data.user)
-        setLoading(false)
-      })
-      .catch(err => {
-        console.log(err)
-        if (err.response.status === 401) {
-          logOut()
-        }
-        setLoading(false)
-      }
-      )
+    if (users) {
+      const user2 = users.filter(listedUser => listedUser.email !== user?.email)
+      setSecondUser(user2[0])
+    }
+  }, [users])
 
-  }, [messages])
+
+  useEffect(() => {
+
+    if(secondUser){
+      const mail :string = secondUser?.email
+      if (onlineUsers?.includes(mail)) setIsOnline(true)
+      else setIsOnline(false)
+    }
+   
+
+ 
+
+  }, [onlineUsers, socket])
+
 
   //////////////////////// send message function////////
+
   const onSubmit = async (data: inputObject) => {
 
     if (data.message.trim() == "") {
@@ -145,8 +131,10 @@ const Chat = (props: Props) => {
             users: [user?.email, secondUser?.email]
           },
           message: res.data.messageResponse,
-          sender : user?.displayName
+          senderName: user?.displayName
         }
+        console.log('second User ==== >>> ', secondUser);
+        console.log('users ==== >>> ', newMessageAndChat);
 
         socket?.emit('new-message', newMessageAndChat)
 
@@ -172,39 +160,13 @@ const Chat = (props: Props) => {
 
 
 
-  // // we want to run this side effect in any change in any state for receiving message
-  // useEffect(() => {
-  //   socket?.on("message-received", (newMessageReceived: any) => {
-  //     //checking if the message is for this chat 
-
-  //     if (chatId !== newMessageReceived.chatId) {
-  //       Swal.fire({
-  //         position: "top-end",
-  //         icon: "info",
-  //         title: `${newMessageReceived.sender.split('@')[0]} sent you a message`,
-  //         text: `${newMessageReceived.content}....`,
-  //         showConfirmButton: false,
-  //         timer: 2000
-  //       });
-  //     } else {
-
-  //       console.log('newMessageReceived');
-
-
-  //       setMessages((prevMessages) => [...prevMessages, newMessageReceived])
-  //     }
-
-  //   })
-  // },
-  // [socket])
-
 
 
 
 
 
   const typingHandler = () => {
-    if (!socketConnected) return
+    if (socket) return
 
     if (!typing) setTyping(true)
     socket.emit('typing', chatId)
@@ -225,7 +187,7 @@ const Chat = (props: Props) => {
 
 
 
-        <div className='border-b border-gray-400 border-opacity-50  mb-2'>
+        <div className='border-b border-gray-400 border-opacity-50    mb-2'>
 
           <div className="py-2 flex flex-row w-full gap-3 ps-2 justify-start items-center text-gray-300 backdrop-blur-md bg-gray-300 bg-opacity-10 ">
             <button className="text-white " title='back' onClick={() => navigate(-1)}>
@@ -242,14 +204,18 @@ const Chat = (props: Props) => {
               </div>
             </div>
             <div className=''>
-              <h3 className='text-xl font-medium text-gray-300'>{secondUser?.name}</h3>
+            
+              <div className='flex items-center gap-2 justify-start'>
+                        <h3 className='text-xl font-medium text-gray-300'>{secondUser?.name}  </h3>
+                        <div title={isOnline ? ' user is Online ' : ''} className={`${isOnline ? 'p-1 rounded-full mt-1 bg-green-500 ' : ''} `}></div>
+                    </div>
               <h4 className='text-sm text-gray-300'>{secondUser?.email}</h4>
             </div>
 
           </div>
         </div>
-        {loading ? <div className='h-full'>
-          loading...
+        {loading ? <div className='h-full flex items-center justify-center'>
+          <AiOutlineLoading3Quarters className='text-6xl animate-spin text-gray-300' />
         </div> : <>
 
 

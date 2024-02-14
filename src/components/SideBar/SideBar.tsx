@@ -10,7 +10,7 @@ type Props = {}
 
 const SideBar = (props: Props) => {
 
-    const { user, logOut, loading } = useContext(Context)!
+    const { user, logOut, loading, requests } = useContext(Context)!
     console.log(user);
     const logOutFunc = async () => {
         if (logOut) {
@@ -37,7 +37,7 @@ const SideBar = (props: Props) => {
                     <Link to='/dashboard/chats' className='flex justify-start gap-2 text-base items-center text-gray-600 font-base  pt-2'>
 
                         <div className='border-2 rounded-md p-1'>
-                        <IoChatboxEllipsesOutline />
+                            <IoChatboxEllipsesOutline />
                         </div>
                         <span>Chats</span>
                     </Link>
@@ -54,6 +54,8 @@ const SideBar = (props: Props) => {
                             <IoPersonOutline />
                         </div>
                         <span>Friend Requests</span>
+                        {requests && requests?.length > 0 ?   <div className='mt-1 ms-[-3px] text-xs w-4 h-4 text-center rounded-full bg-red-500 text-white'>{ requests?.length }</div>:<></>  }
+                     
                     </Link>
                     <Link to='/dashboard/friends' className='flex justify-start gap-2 text-base items-center text-gray-600 font-base  pt-2'>
 

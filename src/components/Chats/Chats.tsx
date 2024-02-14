@@ -11,8 +11,21 @@ type Props = {}
 type inputObject = {
     input: string
 }
+interface LastMessage {
+    _id: string;
+    chatId: string;
+    sender: string;
+    content: string;
+    timeStamp: string; // Assuming timeStamp is a string representing a date
+}
 
-
+interface Chat {
+    chat: {
+        lastMessage: LastMessage;
+        // Other properties of the chat object
+    };
+    // Other properties of the chat object
+}
 
 const Chats = (props: Props) => {
 
@@ -39,8 +52,26 @@ const Chats = (props: Props) => {
             .then(res => {
 
                 console.log('res.data.chats', res.data.chatsFinal);
+                const chatsTemp = res.data.chatsFinal
 
-                setChats(res.data.chatsFinal)
+                console.log('chatsTemp : ', chatsTemp);
+
+                chatsTemp.sort((chat1: Chat, chat2: Chat) => {
+                    // Access the timestamp of the last message in each chat
+                    const timestamp1:any = new Date(chat1.chat.lastMessage.timeStamp);
+                    const timestamp2 :any= new Date(chat2.chat.lastMessage.timeStamp);
+
+                    console.log('timestamps : ', timestamp1, timestamp2);
+
+             
+                    return timestamp2 - timestamp1;
+                });
+
+
+                console.log('chatsTemp after: ', chatsTemp);
+
+
+                setChats(chatsTemp)
                 setLoading(false)
 
             })
@@ -51,12 +82,14 @@ const Chats = (props: Props) => {
                     logOut()
                 }
                 console.log(err)
-                
+
             }
             )
 
     }, [])
 
+
+    console.log(chats);
 
 
 
@@ -79,7 +112,7 @@ const Chats = (props: Props) => {
 
                 <div className='max-w-md  mx-auto'>
 
-                    <h3 className='text-2xl text-center text-[#81689D] pb-1'>Chat history </h3>
+                    <h3 className='text-2xl text-center text-[#FFFFFF] pb-1'>Chat history </h3>
                     <div className='border-t pt-0'>
 
                         {!chats ? <div className='text-xl text-center py-10 text-gray-500'>
@@ -91,7 +124,7 @@ const Chats = (props: Props) => {
 
                                     /////////////////// create an array of requested users then show them here
 
-                                    chats?.map((chat: object|null, i: number) => <ChatsCard key={i} chat={chat} />)
+                                    chats?.map((chat: object | null, i: number) => <ChatsCard key={i} chat={chat} />)
                                 }
 
                             </ul>

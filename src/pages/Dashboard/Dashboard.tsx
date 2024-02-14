@@ -13,7 +13,7 @@ const Dashboard = (props: Props) => {
             </div>
 
             <div className="flex-grow">
-                <div className='background min-h-screen'>
+                <div className='background h-screen overflow-y-auto overflow-x-hidden'>
                     <Outlet />
                 </div>
             </div>

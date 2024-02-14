@@ -77,7 +77,7 @@ const FriendRequests = (props: Props) => {
 
                 <div className='max-w-md  mx-auto'>
 
-                    <h3 className='text-sm text-[#81689D] pb-1'>Incoming Requests: </h3>
+                    <h3 className='text-sm text-[#FFFFFF] pb-1'>Incoming Requests: </h3>
                     <div className='border-t pt-0'>
 
                         {!requesters ? <div className='text-xl text-center py-10 text-gray-500'>
