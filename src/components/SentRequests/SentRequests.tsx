@@ -24,7 +24,7 @@ const SentRequests = (props: Props) => {
     const { user, logOut } = useContext(Context)!
 
     const {requestedPersons,setRequestedPersons} = useContext(SocketContext)!
-    
+
     const [loading, setLoading] = useState<boolean>(false)
 
 
@@ -60,7 +60,7 @@ const SentRequests = (props: Props) => {
 
 
     return (
-        <div className='py-20'>
+        <div className='py-20 px-2'>
 
 
 

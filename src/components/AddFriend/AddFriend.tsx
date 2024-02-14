@@ -101,7 +101,7 @@ const AddFriend = (props: Props) => {
 
 
     return (
-        <div>
+        <div className='px-2 pt-10'>
             <form className='max-w-md mx-auto pt-10 pb-5   ' onSubmit={handleSubmit(searchPeople)}>
 
                 <div className="flex flex-col md:flex-row py-2  justify-center items-center gap-2 overflow-hidden ">

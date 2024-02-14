@@ -61,7 +61,7 @@ const FriendRequests = (props: Props) => {
 
 
     return (
-        <div className='py-20'>
+        <div className='py-20 px-2'>
 
 
 

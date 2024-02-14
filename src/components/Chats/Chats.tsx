@@ -96,13 +96,13 @@ const Chats = (props: Props) => {
 
 
     return (
-        <div className='py-20'>
+        <div className='py-20 px-2'>
 
 
 
             {loading ?
 
-                <div className='w-full flex justify-center items-center py-20'>
+                <div className='w-full flex justify-center items-center py-20 '>
                     <AiOutlineLoading3Quarters className='animate-spin text-6xl text-gray-600' />
 
                 </div>

@@ -27,7 +27,7 @@ interface valueType {
     setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
     onlineUsers: string[] | null,
     setRequestedPersons: React.Dispatch<React.SetStateAction<MongoUser[]>>,
-    requestedPersons: MongoUser[]
+    requestedPersons: MongoUser[],
 }
 
 
@@ -36,7 +36,7 @@ export const SocketContext = createContext<valueType | null>(null)
 
 const SocketContextProvider = ({ children }: Props) => {
 
-    const { user } = useContext(Context)!
+    const { user, requests, setRequests } = useContext(Context)!
 
     const [socket, setSocket] = useState<WebSocket | Socket | null | any>(null)
     const [messages, setMessages] = useState<Message[]>([])
@@ -113,6 +113,10 @@ const SocketContextProvider = ({ children }: Props) => {
 
 
         socket?.on('request accepted res', (user: any) => {
+
+
+            console.log('received.................................................!!!!');
+
             Swal.fire({
                 position: "top-end",
                 icon: "success",
@@ -120,11 +124,30 @@ const SocketContextProvider = ({ children }: Props) => {
                 showConfirmButton: false,
                 timer: 1500
             });
-console.log('request accepted res');
+            console.log('request accepted res hit');
 
 
-            const otherPersons = requestedPersons.filter(person => person.email = user.email)
+            const otherPersons = requestedPersons.filter(person => person.email == user.email)
             setRequestedPersons(otherPersons)
+        })
+
+        socket?.on('send request res', (user: any) => {
+
+
+            console.log('received.................................................!!!!');
+
+            Swal.fire({
+                position: "top-end",
+                icon: "info",
+                title: `${user.name} sent you a request`,
+                showConfirmButton: false,
+                timer: 1500
+            });
+            console.log('request accepted res hit');
+            if (requests) {
+                setRequests(prev => prev ? [...prev, user.email] : [user.email])
+            }
+
         })
 
 

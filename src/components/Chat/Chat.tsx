@@ -198,7 +198,7 @@ const Chat = (props: Props) => {
 
               <div
                 style={{ backgroundImage: `url(${secondUser?.photoURL})` }}
-                className="md:w-14 md:h-14 bg-cover bg-center rounded-full "
+                className="w-14 h-14 bg-cover bg-center rounded-full "
               >
 
               </div>
@@ -234,7 +234,7 @@ const Chat = (props: Props) => {
         </>}
 
 
-        <div className="border-t border-gray-400 border-opacity-50 backdrop-blur-md mt-1 py-4 bg-gray-500 bg-opacity-20">
+        <div className="border-t border-gray-400 border-opacity-50 backdrop-blur-md mt-1 px-2 py-4 bg-gray-500 bg-opacity-20">
           {/* Send message form */}
           <form onSubmit={handleSubmit(onSubmit)} className="max-w-md mx-auto flex gap-2 items-center justify-center">
             {/* Input field with register hook */}

@@ -62,7 +62,7 @@ const ChatsCard = ({ chat }: Props) => {
     return (
         <div onClick={chatfunc}  className='cursor-pointer flex items-center justify-between border-t border-gray-500 bg-white bg-opacity-15 border-s  p-2 backdrop-blur-[2px]  rounded-lg mt-2  hover:-me-5 transition-all ease-in-out  duration-300 group '>
             <div className="basis-1/2 flex gap-2">
-                <div style={{ backgroundImage: `url('${chat?.photoURL}')` }} className='w-[50px] overflow-hidden rounded-full h-[50px] hover:scale-[5] md:hover:scale-[3] md:hover:ms-[-110px] md:hover:me-[100px]  hover:translate-x-24 transition-all ease-in-out duration-300 border  border-gray-300 flex justify-center items-center bg-cover bg-center'>
+                <div style={{ backgroundImage: `url('${chat?.photoURL}')` }} className='w-[50px] overflow-hidden rounded-full h-[50px]     transition-all ease-in-out duration-300 border  border-gray-300 flex justify-center items-center bg-cover bg-center'>
                     {/* <img src={image ? image : ''} className='w-full ' alt={name ? name : ''} /> */}
 
                 </div>
