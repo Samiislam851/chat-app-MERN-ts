@@ -5,6 +5,7 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { Context } from '../../Configs/ContextProvider';
 import { MongoUser } from '../../types/types';
 import ChatsCard from '../ChatsCard/ChatsCard';
+import { SocketContext } from '../../Configs/SocketContextProvider';
 
 
 type Props = {}
@@ -33,9 +34,11 @@ const Chats = (props: Props) => {
 
 
     const { user, logOut } = useContext(Context)!
+    const { chats, setChats } = useContext(SocketContext)!
+
     const [loading, setLoading] = useState<boolean>(false)
 
-    const [chats, setChats] = useState<any[] | null>(null)
+
 
 
 
@@ -58,12 +61,12 @@ const Chats = (props: Props) => {
 
                 chatsTemp.sort((chat1: Chat, chat2: Chat) => {
                     // Access the timestamp of the last message in each chat
-                    const timestamp1:any = new Date(chat1.chat.lastMessage.timeStamp);
-                    const timestamp2 :any= new Date(chat2.chat.lastMessage.timeStamp);
+                    const timestamp1: any = new Date(chat1.chat.lastMessage.timeStamp);
+                    const timestamp2: any = new Date(chat2.chat.lastMessage.timeStamp);
 
                     console.log('timestamps : ', timestamp1, timestamp2);
 
-             
+
                     return timestamp2 - timestamp1;
                 });
 
@@ -97,14 +100,9 @@ const Chats = (props: Props) => {
 
     return (
         <div className='py-20 px-2'>
-
-
-
             {loading ?
-
                 <div className='w-full flex justify-center items-center py-20 '>
                     <AiOutlineLoading3Quarters className='animate-spin text-6xl text-gray-600' />
-
                 </div>
                 :
 
@@ -120,8 +118,7 @@ const Chats = (props: Props) => {
                         </div> :
                             <ul className='list-none '>
                                 {
-
-
+                                    
                                     /////////////////// create an array of requested users then show them here
 
                                     chats?.map((chat: object | null, i: number) => <ChatsCard key={i} chat={chat} />)

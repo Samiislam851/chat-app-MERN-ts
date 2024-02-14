@@ -78,13 +78,6 @@ const ChatsCard = ({ chat }: Props) => {
 
             <div className="basis-1/2">
                 <div className='flex flex-col group justify-end items-end gap-2 '>
-
-
-                    <div>
-                        <p className='text-xs text-white -400 me-2'>
-                            {/* {date.toLocaleString()} */}
-                        </p>
-                    </div>
                     <div className='text-[#4566d1] text-gray-300 px-2 py-1 rounded float-end transition-all  font-thin ease-in-out duration-300 mb-2 group-hover:translate-x-2 group-hover:scale-105 text-sm'>{loading ? <><VscLoading className='inline text-lg animate-spin' /> </> : <> <span>Continue Chatting</span>  <FaArrowRight className='inline' /> </>}</div>
                 </div>
 

@@ -25,7 +25,7 @@ const Chat = (props: Props) => {
 
   const [isOnline, setIsOnline] = useState<boolean>(false)
 
-
+  const [isSending, setIsSending] = useState(false)
 
 
 
@@ -49,7 +49,7 @@ const Chat = (props: Props) => {
   const { register, handleSubmit, reset } = useForm<inputObject>();
 
 
- 
+
 
 
   // /////////////////////// fetching data logic //////////////
@@ -89,14 +89,14 @@ const Chat = (props: Props) => {
 
   useEffect(() => {
 
-    if(secondUser){
-      const mail :string = secondUser?.email
+    if (secondUser) {
+      const mail: string = secondUser?.email
       if (onlineUsers?.includes(mail)) setIsOnline(true)
       else setIsOnline(false)
     }
-   
 
- 
+
+
 
   }, [onlineUsers, socket])
 
@@ -113,6 +113,8 @@ const Chat = (props: Props) => {
 
       try {
 
+        setIsSending(true)
+        reset()
         const res = await axios.post(
           `/send-message/${chatId}`,
           {
@@ -131,7 +133,8 @@ const Chat = (props: Props) => {
             users: [user?.email, secondUser?.email]
           },
           message: res.data.messageResponse,
-          senderName: user?.displayName
+          senderName: user?.displayName,
+          senderPhoto: user?.photoURL
         }
         console.log('second User ==== >>> ', secondUser);
         console.log('users ==== >>> ', newMessageAndChat);
@@ -145,7 +148,11 @@ const Chat = (props: Props) => {
         if (err.response.status === 401) {
           logOut()
         }
-      } finally { }
+      } finally {
+
+        setIsSending(false)
+
+      }
     }
   };
 
@@ -183,7 +190,7 @@ const Chat = (props: Props) => {
 
 
 
-      <div className="flex flex-col h-screen   flex-end">
+      <div className="flex flex-col h-screen  flex-end">
 
 
 
@@ -204,11 +211,11 @@ const Chat = (props: Props) => {
               </div>
             </div>
             <div className=''>
-            
+
               <div className='flex items-center gap-2 justify-start'>
-                        <h3 className='text-xl font-medium text-gray-300'>{secondUser?.name}  </h3>
-                        <div title={isOnline ? ' user is Online ' : ''} className={`${isOnline ? 'p-1 rounded-full mt-1 bg-green-500 ' : ''} `}></div>
-                    </div>
+                <h3 className='text-xl font-medium text-gray-300'>{secondUser?.name}  </h3>
+                <div title={isOnline ? ' user is Online ' : ''} className={`${isOnline ? 'p-1 rounded-full mt-1 bg-green-500 ' : ''} `}></div>
+              </div>
               <h4 className='text-sm text-gray-300'>{secondUser?.email}</h4>
             </div>
 
@@ -245,8 +252,14 @@ const Chat = (props: Props) => {
               className="border rounded-md p-2 w-full"
             />
             {/* Submit button */}
-            <button type="submit" className="bg-blue-500 text-white px-4 py-2  rounded-md hover:bg-blue-600 transition-colors duration-300">
-              Send
+            <button type="submit" className="bg-blue-500 text-white px-4 py-2  rounded-md hover:bg-blue-600 transition-colors duration-300 flex items-center gap-2">
+              {!isSending ? <>  <span>Send</span></> : <span className='animate-pulse'>Sending</span>}
+
+              {isSending ? <>
+                <AiOutlineLoading3Quarters className={`text-sm animate-spin text-gray-300`} />
+              </> : <></>}
+
+
             </button>
           </form>
         </div>

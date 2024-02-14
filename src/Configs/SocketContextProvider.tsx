@@ -28,6 +28,8 @@ interface valueType {
     onlineUsers: string[] | null,
     setRequestedPersons: React.Dispatch<React.SetStateAction<MongoUser[]>>,
     requestedPersons: MongoUser[],
+    setChats: React.Dispatch<React.SetStateAction<any[]>>,
+    chats: any[]
 }
 
 
@@ -42,7 +44,7 @@ const SocketContextProvider = ({ children }: Props) => {
     const [messages, setMessages] = useState<Message[]>([])
     const [onlineUsers, setOnlineUsers] = useState<string[] | null>(null)
     const [requestedPersons, setRequestedPersons] = useState<MongoUser[]>([])
-
+    const [chats, setChats] = useState<any[]>([])
 
     useEffect(() => {
         if (user) {
@@ -78,15 +80,42 @@ const SocketContextProvider = ({ children }: Props) => {
             //checking if the message is for this chat 
 
             if (!window.location.href.includes(newMessageReceived.message.chatId)) {
-                // Swal.fire({
-                //     position: "top-end",
-                //     icon: "info",
-                //     title: `${newMessageReceived.sender.split('@')[0]} sent you a message`,
-                //     text: `${newMessageReceived.content}....`,
-                //     showConfirmButton: false,
-                //     timer: 2000
-                // });
+
                 console.log(newMessageReceived);
+
+                const chatItem = {
+                    chat: {
+                        _id: newMessageReceived.chat.chatId,
+                        chatName: '',
+                        lastMessage: {
+                            content: newMessageReceived.message.content,
+                            sender: newMessageReceived.message.sender,
+                            timeStamp: newMessageReceived.message.timeStamp
+                        }
+                    },
+                    users: newMessageReceived.chat.users,
+                    _id: newMessageReceived.chat.chatId,
+                    email: newMessageReceived.message.sender,
+                    name: newMessageReceived.senderName,
+                    photoURL: newMessageReceived.senderPhoto,
+                    userId: newMessageReceived.message.sender
+                }
+             
+                
+                setChats((prevChats: any) => {
+
+                    console.log('prev Chat ====>', prevChats);
+                    const newChats = prevChats.filter((chat: any) => chat.chat._id !== chatItem._id)
+                    console.log('new chats after filter', newChats);
+
+                    newChats!.unshift(chatItem);
+
+                    return newChats
+
+
+
+
+                });
 
 
                 toast(`${newMessageReceived.senderName} sent : ${newMessageReceived.message.content}`)
@@ -162,7 +191,7 @@ const SocketContextProvider = ({ children }: Props) => {
 
 
     const value: valueType = {
-        socket, messages, setMessages, onlineUsers, setRequestedPersons, requestedPersons
+        socket, messages, setMessages, onlineUsers, setRequestedPersons, requestedPersons, chats, setChats
     }
     return (
         <SocketContext.Provider value={value}>{children}</SocketContext.Provider>
