@@ -75,7 +75,7 @@ const FriendCard = ({ friend, dbUser, setDbUser, setFriends, friends }: Props) =
 
 
     return (
-        <div className='flex items-center justify-between border-t border-gray-500 bg-white bg-opacity-15 border-s  p-2 backdrop-blur-[3px] rounded-lg mt-2  hover:-me-5 transition-all ease-in-out  duration-300  '>
+        <div className='flex items-center justify-between border-t border-gray-500 bg-white bg-opacity-15 border-s  p-2 backdrop-blur-[3px] rounded-lg mt-2  transition-all ease-in-out  duration-300  '>
             <div className="basis-1/2 flex gap-2">
                 <div style={{ backgroundImage: `url('${photoURL}')` }} className={` w-[50px] hover:z-50 overflow-hidden rounded-full h-[50px]  transition-all ease-in-out duration-300 border border-gray-300 flex justify-center items-center bg-cover bg-center `}>
                     {/* <img src={image ? image : ''} className='w-full ' alt={name ? name : ''} /> */}

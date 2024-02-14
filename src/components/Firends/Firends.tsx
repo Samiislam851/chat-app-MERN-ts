@@ -78,7 +78,7 @@ const Friends = (props: Props) => {
 
                 <div className='max-w-md  mx-auto'>
 
-                    <h3 className='text-xl text-[#FFFFFF] pb-1 '>Friends </h3>
+                    <h3 className='text-xl text-[#FFFFFF] pb-1'>Friends </h3>
                     <div className='border-t pt-2  '>
 
 

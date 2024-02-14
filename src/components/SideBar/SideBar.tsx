@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { Context } from '../../Configs/ContextProvider'
-import {  IoIosLogOut, IoMdClose } from 'react-icons/io'
+import { IoIosLogOut, IoMdClose } from 'react-icons/io'
 import { Link } from 'react-router-dom'
 import { IoChatboxEllipsesOutline, IoHome, IoPersonAddOutline, IoPersonOutline } from 'react-icons/io5'
 import { BsPeopleFill } from 'react-icons/bs'
@@ -10,7 +10,7 @@ type Props = {
     setSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const SideBar = ({setSidebarOpen}: Props) => {
+const SideBar = ({ setSidebarOpen }: Props) => {
 
     const { user, logOut, loading, requests } = useContext(Context)!
     console.log(user);
@@ -24,13 +24,13 @@ const SideBar = ({setSidebarOpen}: Props) => {
 
 
     return (
-        <div className="         flex flex-col max-w-sm h-screen border-e border-opacity-50  border-gray-500 bg-transparent  ">
+        <div className="flex flex-col max-w-sm h-screen border-e border-opacity-50  border-gray-500 bg-transparent">
             {/* Top */}
-            <div className="flex justify-between px-2  py-2  gap-2  items-center">
+            <div className="flex justify-between px-2 py-2 gap-2 items-center">
 
                 <h3 className='text-gray-100 -700 text-2xl font-bold'>ChitChatZ</h3>
 
-                <div onClick={()=>setSidebarOpen(false)} className='  md:hidden text-xl pe-2'><IoMdClose /></div>
+                <div onClick={() => setSidebarOpen(false)} className='  md:hidden text-xl pe-2'><IoMdClose /></div>
             </div>
 
             {/* Middle */}
@@ -38,44 +38,44 @@ const SideBar = ({setSidebarOpen}: Props) => {
 
                 <div className="basis-1/2  border-t pt-2 border-gray-500 px-3 border-opacity-50 ">
                     <h4 className='text-sm text-gray-00 -500 font-medium' >Options</h4>
-                    <Link to='/dashboard/' className='flex justify-start gap-2  text-base items-center text-gray-00 -600 font-base  pt-2 mt-1'>
+                    <Link onClick={() => setSidebarOpen(false)} to='/dashboard/' className='flex justify-start gap-2  text-base items-center text-gray-00 -600 font-base  pt-2 mt-1'>
 
                         <div className='border rounded-md p-1'>
-                            <IoHome/>
+                            <IoHome />
                         </div>
                         <span>Home</span>
                     </Link>
-                    <Link to='/dashboard/chats' className='flex justify-start gap-2  text-base items-center text-gray-00 -600 font-base  pt-2 mt-1'>
+                    <Link onClick={() => setSidebarOpen(false)} to='/dashboard/chats' className='flex justify-start gap-2  text-base items-center text-gray-00 -600 font-base  pt-2 mt-1'>
 
                         <div className='border rounded-md p-1'>
                             <IoChatboxEllipsesOutline />
                         </div>
                         <span>Chats</span>
                     </Link>
-                    <Link to='/dashboard/add-friend' className='flex justify-start gap-2  text-base items-center text-gray-00 -600 font-base  pt-2 mt-1'>
+                    <Link onClick={() => setSidebarOpen(false)} to='/dashboard/add-friend' className='flex justify-start gap-2  text-base items-center text-gray-00 -600 font-base  pt-2 mt-1'>
 
                         <div className='border rounded-md p-1'>
                             <IoPersonAddOutline />
                         </div>
                         <span>Add Friend</span>
                     </Link>
-                    <Link to='/dashboard/friend-requests' className='flex justify-start gap-2  text-base items-center text-gray-00 -600 font-base  pt-2 mt-1'>
+                    <Link onClick={() => setSidebarOpen(false)} to='/dashboard/friend-requests' className='flex justify-start gap-2  text-base items-center text-gray-00 -600 font-base  pt-2 mt-1'>
 
                         <div className='border rounded-md p-1'>
                             <IoPersonOutline />
                         </div>
                         <span>Friend Requests</span>
-                        {requests && requests?.length > 0 ?   <div className='mt-1 ms-[-3px] text-xs w-4 h-4 text-center rounded-full bg-red-500 text-white'>{ requests?.length }</div>:<></>  }
-                     
+                        {requests && requests?.length > 0 ? <div className='mt-1 ms-[-3px] text-xs w-4 h-4 text-center rounded-full bg-red-500 text-white'>{requests?.length}</div> : <></>}
+
                     </Link>
-                    <Link to='/dashboard/friends' className='flex justify-start gap-2  text-base items-center text-gray-00 -600 font-base  pt-2 mt-1'>
+                    <Link onClick={() => setSidebarOpen(false)} to='/dashboard/friends' className='flex justify-start gap-2  text-base items-center text-gray-00 -600 font-base  pt-2 mt-1'>
 
                         <div className='border rounded-md p-1'>
                             <BsPeopleFill />
                         </div>
                         <span>My Friends</span>
                     </Link>
-                    <Link to='/dashboard/sent-requests' className='flex justify-start gap-2  text-base items-center text-gray-00 -600 font-base  pt-2 mt-1'>
+                    <Link onClick={() => setSidebarOpen(false)} to='/dashboard/sent-requests' className='flex justify-start gap-2  text-base items-center text-gray-00 -600 font-base  pt-2 mt-1'>
 
                         <div className='border rounded-md p-1'>
                             <FaArrowRight />
