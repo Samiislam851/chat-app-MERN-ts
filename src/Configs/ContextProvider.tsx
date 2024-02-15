@@ -27,9 +27,10 @@ export interface valueType {
     setDbUser: React.Dispatch<React.SetStateAction<MongoUser | null>>,
     notification: any,
     setNotification: React.Dispatch<any>,
-    requests: object[]|null,
-    setRequests: React.Dispatch<React.SetStateAction<object[] | null>>
-
+    requests: object[] | null,
+    setRequests: React.Dispatch<React.SetStateAction<object[] | null>>,
+    setLoggedIn: React.Dispatch<React.SetStateAction<boolean>>,
+    loggedIn: boolean
 }
 
 
@@ -49,7 +50,7 @@ export default function ContextProvider({ children }: Props) {
     const [loading, setLoading] = useState<boolean>(true)
     const [user, setUser] = useState<User | null>(null)
     const [dbUser, setDbUser] = useState<MongoUser | null>(null)
-
+    const [loggedIn, setLoggedIn] = useState<boolean>(false)
 
     ////////////////////  firebase features initialization ///////////////
     const googleProvider = new GoogleAuthProvider();
@@ -127,11 +128,11 @@ export default function ContextProvider({ children }: Props) {
 
     ///// friend requests ///
 
-    const [requests, setRequests] = useState<object[]|null>([])
+    const [requests, setRequests] = useState<object[] | null>([])
 
     useEffect(() => {
 
-        if (user) {
+        if (user && loggedIn) {
 
             console.log('user email', user.email);
 
@@ -160,14 +161,13 @@ export default function ContextProvider({ children }: Props) {
 
 
 
-    console.log('requesters from context ..........', requests);
 
 
 
     /////////////////////////////////////////////////////////////
     const value: valueType = {
         first, setFirst, googleLogin, logOut,
-        loading, setLoading, emailRegister, emailSignIn, addUserDetails, user, setUser, dbUser, setDbUser, setNotification, notification, requests,setRequests
+        loading, setLoading, emailRegister, emailSignIn, addUserDetails, user, setUser, dbUser, setDbUser, setNotification, notification, requests, setRequests, setLoggedIn, loggedIn
     }
 
     return (

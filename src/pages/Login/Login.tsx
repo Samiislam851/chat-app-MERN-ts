@@ -35,7 +35,7 @@ export default function page({ }: Props) {
 
 
 
-  const {  user, setUser, logOut, emailSignIn, setDbUser, dbUser } = contextValue!
+  const { user, setUser, logOut, emailSignIn, setDbUser, dbUser, loggedIn, setLoggedIn } = contextValue!
 
 
   console.log('DBUSER :::::::::::::::::::', dbUser);
@@ -60,9 +60,10 @@ export default function page({ }: Props) {
 
 
         localStorage.setItem('chat-app', res.data.token)
+        setLoggedIn(true)
 
       } else {
-       
+
       }
 
     } catch (error) {
@@ -132,7 +133,7 @@ export default function page({ }: Props) {
               <h3 className='text-gray-200 text-center  text-sm py-3'>    New to NextChat? <span className='animate-pulse text-base text-blue-300'> <Link to={'/register'} >Create an account!</Link> </span></h3>
 
 
-     
+
             </div>
           </div>
         </div>
