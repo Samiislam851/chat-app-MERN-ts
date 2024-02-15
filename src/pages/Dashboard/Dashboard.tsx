@@ -16,12 +16,14 @@ const Dashboard = (props: Props) => {
 
     return (
         <div className='relative overflow-hidden'>
-            <div onClick={() => setSidebarOpen(true)} className={` md:hidden text-white font-bold absolute text-xl top-6 right-4 backdrop-blur z-[100] 
-        transition-all ease-in-out duration-500    ${sidebarOpen ? 'translate-y-[-500px]' : 'translate-y-0'}
+            {sidebarOpen && <div className='bg-gray-800 bg-opacity-20 absolute backdrop-blur-sm z-50  w-screen h-screen'></div>}
+        
+            <div onClick={() => setSidebarOpen(true)} className={`md:hidden cursor-pointer text-white font-bold absolute text-xl top-6 right-4 backdrop-blur z-[100] 
+        transition-all ease-in-out duration-500  ${sidebarOpen ? 'translate-y-[-500px]' : 'translate-y-0'}
             `}><RxHamburgerMenu /></div>
             <div className='background  flex w-full  relative '>
 
-                <div className={`absolute md:relative  bg-gray-400  bg-opacity-10 backdrop-blur-md z-50 text-gray-200 
+                <div className={`absolute md:relative  bg-gray-400  bg-opacity-15 backdrop-blur-md z-50 text-gray-200 
                 transition-all ease-in-out duration-500
                 ${sidebarOpen ? 'translate-x-0' : 'translate-x-[-400px] md:translate-x-0'}
                 `}>
@@ -29,7 +31,7 @@ const Dashboard = (props: Props) => {
                 </div>
 
                 <div className="flex-grow">
-                    <div className='h-screen overflow-y-auto overflow-x-hidden '>
+                    <div className='h-screen overflow-y-auto overflow-x-hidden  '>
                         <Outlet />
                     </div>
                 </div>

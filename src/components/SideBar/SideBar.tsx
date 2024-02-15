@@ -30,7 +30,7 @@ const SideBar = ({ setSidebarOpen }: Props) => {
 
                 <h3 className='text-gray-100 -700 text-2xl font-bold'>ChitChatZ</h3>
 
-                <div onClick={() => setSidebarOpen(false)} className='  md:hidden text-xl pe-2'><IoMdClose /></div>
+                <div onClick={() => setSidebarOpen(false)} className='cursor-pointer  md:hidden text-xl pe-2'><IoMdClose /></div>
             </div>
 
             {/* Middle */}

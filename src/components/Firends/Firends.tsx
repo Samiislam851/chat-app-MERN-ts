@@ -31,28 +31,31 @@ const Friends = (props: Props) => {
     // console.log(searchedUsers);
     const [dbUser, setDbUser] = useState<MongoUser | null>(null)
     useEffect(() => {
-        setLoading(true)
-        axios.get(`/get-friends?email=${user?.email}`, {
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem('chat-app')}`
-            }
-        })
-            .then(res => {
 
-
-                setFriends(res.data.users)
-                setLoading(false)
-
-            })
-            .catch(err => {
-
-                setLoading(false)
-                console.log(err)
-                if (err.response.status === 401) {
-                    logOut()
+        if (user) {
+            setLoading(true)
+            axios.get(`/get-friends?email=${user?.email}`, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('chat-app')}`
                 }
-            }
-            )
+            })
+                .then(res => {
+
+
+                    setFriends(res.data.users)
+                    setLoading(false)
+
+                })
+                .catch(err => {
+
+                    setLoading(false)
+                    console.log(err)
+                    if (err.response.status === 401) {
+                        logOut()
+                    }
+                }
+                )
+        }
 
     }, [])
 

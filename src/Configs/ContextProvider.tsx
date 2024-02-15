@@ -4,7 +4,7 @@ import { GoogleAuthProvider, createUserWithEmailAndPassword, getAuth, onAuthStat
 import { UserCredential } from "firebase/auth";
 import { MongoUser, User } from '../types/types';
 import app from '../utils/firebase';
-import io from 'socket.io-client'
+import io, { Socket } from 'socket.io-client'
 import axios from 'axios';
 //////////////// interfaces and types ////////////////////////
 type Props = {

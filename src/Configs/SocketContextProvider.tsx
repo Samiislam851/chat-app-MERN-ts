@@ -4,7 +4,8 @@ import { Context } from './ContextProvider'
 import Swal from 'sweetalert2'
 import toast from 'react-hot-toast'
 import { MongoUser } from '../types/types'
-
+import Sound from '../assets/notification.mp3'
+import Tic from '../assets/tic.mp3'
 interface Props {
     children: ReactNode
 }
@@ -29,7 +30,15 @@ interface valueType {
     setRequestedPersons: React.Dispatch<React.SetStateAction<MongoUser[]>>,
     requestedPersons: MongoUser[],
     setChats: React.Dispatch<React.SetStateAction<any[]>>,
-    chats: any[]
+    chats: any[],
+    setTypingData: React.Dispatch<React.SetStateAction<{
+        user: string;
+        typing: boolean;
+    }>>,
+    typingData: {
+        user: string;
+        typing: boolean;
+    }
 }
 
 
@@ -38,6 +47,12 @@ export const SocketContext = createContext<valueType | null>(null)
 
 const SocketContextProvider = ({ children }: Props) => {
 
+
+
+
+    const notificationAudio = new Audio(Sound)
+    const ticSound = new Audio(Tic);
+
     const { user, requests, setRequests } = useContext(Context)!
 
     const [socket, setSocket] = useState<WebSocket | Socket | null | any>(null)
@@ -45,6 +60,8 @@ const SocketContextProvider = ({ children }: Props) => {
     const [onlineUsers, setOnlineUsers] = useState<string[] | null>(null)
     const [requestedPersons, setRequestedPersons] = useState<MongoUser[]>([])
     const [chats, setChats] = useState<any[]>([])
+    const [typingData, setTypingData] = useState({ user :'',typing:false})
+
 
     useEffect(() => {
         if (user) {
@@ -100,8 +117,8 @@ const SocketContextProvider = ({ children }: Props) => {
                     photoURL: newMessageReceived.senderPhoto,
                     userId: newMessageReceived.message.sender
                 }
-             
-                
+
+
                 setChats((prevChats: any) => {
 
                     console.log('prev Chat ====>', prevChats);
@@ -117,11 +134,11 @@ const SocketContextProvider = ({ children }: Props) => {
 
                 });
 
-
+                notificationAudio.play()
                 toast(`${newMessageReceived.senderName} sent : ${newMessageReceived.message.content}`)
             } else {
 
-                console.log('newMessageReceived');
+                ticSound.play()
                 if (!messages.some(message => message._id == newMessageReceived.message._id)) {
                     setMessages((prevMessages) => [...prevMessages, newMessageReceived.message])
                 }
@@ -143,9 +160,7 @@ const SocketContextProvider = ({ children }: Props) => {
 
         socket?.on('request accepted res', (user: any) => {
 
-
-            console.log('received.................................................!!!!');
-
+            notificationAudio.play()
             Swal.fire({
                 position: "top-end",
                 icon: "success",
@@ -153,7 +168,6 @@ const SocketContextProvider = ({ children }: Props) => {
                 showConfirmButton: false,
                 timer: 1500
             });
-            console.log('request accepted res hit');
 
 
             const otherPersons = requestedPersons.filter(person => person.email == user.email)
@@ -162,9 +176,7 @@ const SocketContextProvider = ({ children }: Props) => {
 
         socket?.on('send request res', (user: any) => {
 
-
-            console.log('received.................................................!!!!');
-
+            notificationAudio.play()
             Swal.fire({
                 position: "top-end",
                 icon: "info",
@@ -172,13 +184,21 @@ const SocketContextProvider = ({ children }: Props) => {
                 showConfirmButton: false,
                 timer: 1500
             });
-            console.log('request accepted res hit');
             if (requests) {
                 setRequests(prev => prev ? [...prev, user.email] : [user.email])
             }
-
         })
 
+
+
+        socket?.on('typing', (data: any) => {
+            console.log('typing ....', data);
+            setTypingData(data)
+        })
+        socket?.on('typing stopped', (data: any) => {
+            console.log('typing stopped', data);
+            setTypingData(data)
+        })
 
 
         return () => {
@@ -187,11 +207,10 @@ const SocketContextProvider = ({ children }: Props) => {
     }, [socket])
 
 
-    console.log('online users', onlineUsers);
 
 
     const value: valueType = {
-        socket, messages, setMessages, onlineUsers, setRequestedPersons, requestedPersons, chats, setChats
+        socket, messages, setMessages, onlineUsers, setRequestedPersons, requestedPersons, chats, setChats, typingData, setTypingData
     }
     return (
         <SocketContext.Provider value={value}>{children}</SocketContext.Provider>

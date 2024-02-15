@@ -33,7 +33,7 @@ const ChatsCard = ({ chat }: Props) => {
     }
 
 
-    const { onlineUsers, socket } = useContext(SocketContext)!
+    const { onlineUsers, socket, typingData } = useContext(SocketContext)!
     const [isOnline, setIsOnline] = useState<boolean>(false)
 
 
@@ -47,6 +47,8 @@ const ChatsCard = ({ chat }: Props) => {
     }, [onlineUsers, socket])
 
 
+
+   
 
 
 
