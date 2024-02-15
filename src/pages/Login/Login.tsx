@@ -132,7 +132,7 @@ export default function page({ }: Props) {
               <h3 className='text-gray-200 text-center  text-sm py-3'>    New to NextChat? <span className='animate-pulse text-base text-blue-300'> <Link to={'/register'} >Create an account!</Link> </span></h3>
 
 
-              {/* <div><button onClick={loginWithGoogle} className='border px-6 py-2 my-5 rounded-md bg-slate-800 text-white hover:shadow-xl hover:scale-105 transition-all ease-in-out duration-300 border-gray-600'>{isLoading ? <AiOutlineLoading3Quarters className=' inline text-xl animate-spin' /> : <FcGoogle className=' inline text-xl pb-1' />}     login with google</button></div> */}
+     
             </div>
           </div>
         </div>
