@@ -5,7 +5,7 @@ import Swal from 'sweetalert2'
 import toast from 'react-hot-toast'
 import { MongoUser } from '../types/types'
 import Sound from '../assets/notification.mp3'
-import Tic from '../assets/tic.mp3'
+import Tic from '../assets/facebook_chat_pop.mp3'
 interface Props {
     children: ReactNode
 }

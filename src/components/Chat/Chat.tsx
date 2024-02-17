@@ -222,15 +222,15 @@ const Chat = (props: Props) => {
 
       // console.log('offsetHeight :', offsetHeight, 'scrollHeight :', scrollHeight, 'scrollTop : ', scrollTop);
       // search mozilla developers if forgotten what these are
+      container.current?.scrollTo({ left: 0, top: scrollHeight, behavior: "smooth" })
 
 
-
-      if (initialLoad) {
-        container.current?.scrollTo({ left: 0, top: scrollHeight })
-      }
-      else if ((scrollHeight <= scrollTop + offsetHeight + 700) || initialLoad) {
-        container.current?.scrollTo({ left: 0, top: scrollHeight, behavior: "smooth" })
-      }
+      // if (initialLoad) {
+      //   container.current?.scrollTo({ left: 0, top: scrollHeight })
+      // }
+      // else if ((scrollHeight <= scrollTop + offsetHeight + 700) || initialLoad) {
+      //   container.current?.scrollTo({ left: 0, top: scrollHeight, behavior: "smooth" })
+      // }
     }
 
     if (messages?.length > 0) {
@@ -240,7 +240,7 @@ const Chat = (props: Props) => {
 
   useEffect(() => {
     Scroll()
-  }, [messages,typingData.typing])
+  }, [messages, typingData.typing])
 
 
 
@@ -261,7 +261,7 @@ const Chat = (props: Props) => {
 
 
 
-      <div className="flex flex-col h-screen  flex-end">
+      <div className="flex flex-col h-screen  flex-end backdrop-blur-sm">
 
 
 
@@ -310,15 +310,14 @@ const Chat = (props: Props) => {
                 >
                   <div
                     title={new Date(message.timeStamp).toLocaleString()}
-                    className={`max-w-xs text-lg rounded-lg px-4 py-2 ${message.sender === user?.email ? 'bg-purple-600 text-white self-end' : 'bg-gray-200 text-gray-600 self-start'
+                    className={`max-w-xs text-lg rounded-lg px-4 py-2 ${message.sender === user?.email ? 'bg-[#A155B9] text-white self-end' : 'bg-gray-200 text-gray-600 self-start'
                       }`}
                   >
                     {message.content}
                   </div>
-
-
                 </div>
               ))}
+
               {(typingData.user === secondUser?.email && typingData.typing) ? <>
 
                 <div
@@ -326,7 +325,7 @@ const Chat = (props: Props) => {
                   className={`w-full mb-2 flex  'justify-end' : 'justify-start`}
                 >
                   <div className='bg-gray-300  h-10 w-16 rounded-full flex items-center'>
-                    <img className='w-full h-f mt-1' src="/public/typing.gif" alt="" />
+                    <div className='text-gray-400 animate-pulse'>typing...</div>
                   </div> </div>
 
               </> : <></>}

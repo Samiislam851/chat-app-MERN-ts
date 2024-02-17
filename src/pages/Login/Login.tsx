@@ -29,13 +29,13 @@ type inputObject = {
 
 export default function page({ }: Props) {
 
-  const [loading, setLoading] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const contextValue = useContext<valueType | null>(Context)
 
 
 
 
-  const { user, setUser, logOut, emailSignIn, setDbUser, dbUser, loggedIn, setLoggedIn } = contextValue!
+  const { user, setUser, logOut, emailSignIn, setDbUser, dbUser, loggedIn, setLoggedIn, loading, setLoading } = contextValue!
 
 
   console.log('DBUSER :::::::::::::::::::', dbUser);
@@ -55,13 +55,11 @@ export default function page({ }: Props) {
 
 
         setDbUser(res.data.user)
-        console.log('response............', res.data.user);
-
-
-
+        console.log('response from my db............', res.data.user);
         localStorage.setItem('chat-app', res.data.token)
         setLoggedIn(true)
-
+        setIsLoading(false)
+        setLoading(false)
       } else {
 
       }
@@ -83,21 +81,22 @@ export default function page({ }: Props) {
     if (/^\s*$/.test(data.email) || /^\s*$/.test(data.password)) {
       toast.error('Please Enter something ')
     } else {
-
-
+      setIsLoading(true)
       setLoading(true)
       emailSignIn(data.email, data.password).then((userCredential) => {
-
         const user = userCredential.user;
+        console.log('userCredentials from firebase..',user);
         loginFromDB(user)
         setUser(user)
         setLoading(false)
+        setIsLoading(false)
       })
         .catch((error: any) => {
           const errorCode = error.code;
           const errorMessage = error.message;
           toast.error(errorMessage);
           setLoading(false)
+          setIsLoading(false)
         });
     }
   }
@@ -106,8 +105,6 @@ export default function page({ }: Props) {
     <>
 
       <div className='background min-h-[100vh] text-center flex flex-col-reverse md:flex-row gap-10 justify-center items-center '>
-
-
         <div className='w-fit '>
           <div className='rounded-lg py-5 backdrop-blur-md bg-gray-200 bg-opacity-[0.09] border border-opacity-10 border-gray-400 max-w-md  transition-all ease-in-out duration-500 hover:shadow-2xl '>
             <div className='w-fit mx-auto'>
@@ -122,7 +119,7 @@ export default function page({ }: Props) {
               <input  {...register('password')} className='p-2 m-2 w-full rounded-lg border border-gray-300 focus:border-gray-500 focus:outline-gray-300' type="text" placeholder='Enter your Password' />
 
               <button className='border py-2 px-4 rounded-lg bg-[#81689D] text-white hover:shadow-xl transition-all ease-in-out duration-300 hover:scale-105 border-0 '>
-                {loading ?
+                {isLoading ?
                   <AiOutlineLoading3Quarters className='text-2xl animate-spin' />
                   :
                   <span>Login</span>
@@ -130,7 +127,7 @@ export default function page({ }: Props) {
               </button>
             </form>
             <div className='max-w-md  px-5 md:px-10'>
-              <h3 className='text-gray-200 text-center  text-sm py-3'>    New to NextChat? <span className='animate-pulse text-base text-blue-300'> <Link to={'/register'} >Create an account!</Link> </span></h3>
+              <h3 className='text-gray-200 text-center  text-sm py-3'> New to NextChat? <span className='animate-pulse text-base text-blue-300'> <Link to={'/register'} >Create an account!</Link> </span></h3>
 
 
 

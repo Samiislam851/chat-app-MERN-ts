@@ -64,22 +64,7 @@ export default function ContextProvider({ children }: Props) {
 
 
 
-    useEffect(() => {
-        const unsubscribe = () => {
-            onAuthStateChanged(auth, (loggedUser: User | null) => {
-                setUser(loggedUser)
-                setLoading(false)
-            })
-        }
-        // const currentUser = auth.currentUser;
-        // if (currentUser) {
-        //     setUser(currentUser);
-        // }
 
-        return () => {
-            unsubscribe()
-        }
-    }, [])
 
 
 
@@ -160,6 +145,46 @@ export default function ContextProvider({ children }: Props) {
     }, [user])
 
 
+    useEffect(() => {
+        const unsubscribe = () => {
+
+            console.log('inside auth state changed unsubscribe');
+
+            onAuthStateChanged(auth, (loggedUser: User | null) => {
+                setUser(loggedUser)
+
+                console.log('on auth state changed func user:', loggedUser);
+
+                setLoading(false)
+            })
+        }
+        console.log('user ::: after onAuthStateChanged', user);
+        return () => {
+            unsubscribe()
+        }
+    }, [])
+
+
+    // for production  error  using local storage for saving the user credentials
+
+    useEffect(() => {
+        const storedUserCred = localStorage.getItem('userCred');
+
+
+
+        if (storedUserCred !== null) {
+            const userCred = JSON.parse(storedUserCred);
+            const { email, pass } = userCred!
+            emailSignIn(email, pass)
+
+        } else {
+            // Handle the case where 'userCred' is not found in localStorage
+        }
+
+        return () => {
+        
+        }
+    }, [])
 
 
 
