@@ -5,7 +5,7 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 import toast from 'react-hot-toast';
 
-
+import { BsEyeFill, BsEyeSlashFill } from 'react-icons/bs';
 
 import { GoogleAuthProvider } from 'firebase/auth';
 import axios from 'axios';
@@ -31,6 +31,8 @@ export default function page({ }: Props) {
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const contextValue = useContext<valueType | null>(Context)
+  const [showPassword, setShowPassword] = useState(false);
+
 
 
 
@@ -44,6 +46,11 @@ export default function page({ }: Props) {
   const { register, handleSubmit } = useForm<inputObject>()
 
 
+
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(prevState => !prevState);
+  };
 
   const loginFromDB = async (user: User) => {
     // save user to DB
@@ -85,7 +92,7 @@ export default function page({ }: Props) {
       setLoading(true)
       emailSignIn(data.email, data.password).then((userCredential) => {
         const user = userCredential.user;
-        console.log('userCredentials from firebase..',user);
+        console.log('userCredentials from firebase..', user);
         loginFromDB(user)
         setUser(user)
         setLoading(false)
@@ -108,15 +115,29 @@ export default function page({ }: Props) {
         <div className='w-fit '>
           <div className='rounded-lg py-5 backdrop-blur-md bg-gray-200 bg-opacity-[0.09] border border-opacity-10 border-gray-400 max-w-md  transition-all ease-in-out duration-500 hover:shadow-2xl '>
             <div className='w-fit mx-auto'>
-              <img className='' src={'/logo.png'} width={50} height={50} alt={'Logo'} />
+              <h3 className='text-3xl font-bold text-gray-300'>Chitchatz</h3>
             </div>
 
-            <h3 className='text-3xl text-white font-medium md:font-bold px-5 md:px-10 my-6'>Sign in to you account</h3>
+            <h3 className='text-xl text-white font-thin md:font-thin px-5 md:px-10 mb-6'>Sign in to you account</h3>
 
             <form className='max-w-md  px-5 md:px-10 mx-auto flex flex-col items-center justify-center gap-1 pb-5' onSubmit={handleSubmit(handleLogin)} >
               <input {...register('email')} className='p-2 m-2 w-full rounded-lg border border-gray-300 focus:border-gray-500 focus:outline-gray-300' type="text" placeholder='Enter your Email' />
 
-              <input  {...register('password')} className='p-2 m-2 w-full rounded-lg border border-gray-300 focus:border-gray-500 focus:outline-gray-300' type="text" placeholder='Enter your Password' />
+              <div className="relative m-2 w-full rounded-lg border">
+                <input
+                  {...register('password')}
+                  className="p-2  w-full rounded-lg border border-gray-300 focus:border-gray-500 focus:outline-gray-300"
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="Enter your Password"
+                />
+                <button
+                  type="button"
+                  onClick={togglePasswordVisibility}
+                  className="absolute top-0 right-0 mt-3 pe-1 text-gray-700 mr-2"
+                >
+                  {showPassword ? <BsEyeSlashFill /> : <BsEyeFill />}
+                </button>
+              </div>
 
               <button className='border py-2 px-4 rounded-lg bg-[#81689D] text-white hover:shadow-xl transition-all ease-in-out duration-300 hover:scale-105 border-0 '>
                 {isLoading ?

@@ -324,8 +324,8 @@ const Chat = (props: Props) => {
 
                   className={`w-full mb-2 flex  'justify-end' : 'justify-start`}
                 >
-                  <div className='bg-gray-300  h-10 w-16 rounded-full flex items-center'>
-                    <div className='text-gray-400 animate-pulse'>typing...</div>
+                  <div className='bg-gray-300  h-10 w-fit rounded-full flex items-center'>
+                    <div className='text-gray-600 animate-pulse px-3'>typing...</div>
                   </div> </div>
 
               </> : <></>}

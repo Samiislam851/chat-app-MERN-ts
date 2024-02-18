@@ -146,6 +146,8 @@ export default function ContextProvider({ children }: Props) {
 
 
     useEffect(() => {
+     
+        console.log('outside auth state changed unsubscribe');
         const unsubscribe = () => {
 
             console.log('inside auth state changed unsubscribe');
@@ -167,24 +169,24 @@ export default function ContextProvider({ children }: Props) {
 
     // for production  error  using local storage for saving the user credentials
 
-    useEffect(() => {
-        const storedUserCred = localStorage.getItem('userCred');
+    // useEffect(() => {
+    //     const storedUserCred = localStorage.getItem('userCred');
 
 
 
-        if (storedUserCred !== null) {
-            const userCred = JSON.parse(storedUserCred);
-            const { email, pass } = userCred!
-            emailSignIn(email, pass)
+    //     if (storedUserCred !== null) {
+    //         const userCred = JSON.parse(storedUserCred);
+    //         const { email, pass } = userCred!
+    //         emailSignIn(email, pass)
 
-        } else {
-            // Handle the case where 'userCred' is not found in localStorage
-        }
+    //     } else {
+    //         // Handle the case where 'userCred' is not found in localStorage
+    //     }
 
-        return () => {
+    //     return () => {
         
-        }
-    }, [])
+    //     }
+    // }, [])
 
 
 
