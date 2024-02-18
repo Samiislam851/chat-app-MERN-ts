@@ -22,10 +22,10 @@ Follow these steps to run the Chat App locally on your machine:
 
 1. **Clone the Repository:**
 
-   ```
-   git clone https://github.com/your-username/chat-app.git
-
-   ````
+  ````
+  git clone https://github.com/your-username/chat-app.git
+ 
+  ````
 2. **Navigate to the Project Directory:**
 
 ```` 
